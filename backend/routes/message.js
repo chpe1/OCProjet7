@@ -7,11 +7,11 @@ const auth = require('../middleware/auth');
 const messageCtrl = require('../controllers/message');
 
 
-router.post('/', messageCtrl.createMessage);
+router.post('/', auth, messageCtrl.createMessage);
 router.put('/:id', auth, messageCtrl.modifyMessage);
 router.delete('/:id', auth, messageCtrl.deleteMessage);
-router.get('/', messageCtrl.getAllMessages);
-router.post('/:id', messageCtrl.getOneMessage);
+router.get('/', auth, messageCtrl.getAllMessages);
+router.get('/:id', auth, messageCtrl.getOneMessage);
 
 // Ajouter route like
 
