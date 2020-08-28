@@ -4,13 +4,20 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
 exports.signup = (req, res, next) => {
+    let avatarFile;
+    if (req.file)
+    {
+        avatarFile = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+    }
+    else{
+        avatarFile = `${req.protocol}://${req.get('host')}/images/avatar_default.png`;
+    }
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
         User.create({
             email: req.body.email,
             password: hash,
-            // avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` 
-            avatar: req.body.avatar
+            avatar: avatarFile
         })
         .then(() => res.status(201).json({ message: 'Utilisateur créé avec succès !' }))
         .catch(error => res.status(400).json({ error }));   
@@ -55,77 +62,82 @@ exports.modifyUser = (req, res, next) => {
         }
     })
     .then(user =>{
-        // On cré un objet utilisateur pour faire une copie modifiée de user
-        let userObject;
-        // Si la requête dispose d'une image, on copie les infos de la requête 
-        // dans l'objet utilisateur et on y ajoute cet avatar
-        if (req.file){
-            userObject = {
-                ...JSON.parse(user),
-                avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-            }
-            bcrypt.compare(req.body.password, user.password)
+        bcrypt.compare(req.body.password, user.password)
             .then(valid => {
                 if (!valid) { // Si le mdp est différent, on le modifie
                     bcrypt.hash(req.body.password, 10)
                     .then(hash => {
-                        userObject.password = hash
+                        // Si la requête contient un fichier
+                        if (req.file){
+                            User.update({
+                                password: hash,
+                                avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                            }, 
+                            {
+                                where: {
+                                    email: req.body.email
+                                }
+                            })
+                            .then(nbrUserUpdate => res.status(200).json(nbrUserUpdate))
+                            .catch(error => res.status(400).json({ error }));
+                        }
+                        // Si la requête ne contient pas de fichier
+                        else{
+                            User.update({
+                                password: hash,
+                                avatar: req.body.avatar
+                            }, 
+                            {
+                                where: {
+                                    email: req.body.email
+                                }
+                            })
+                            .then(nbrUserUpdate => res.status(200).json(nbrUserUpdate))
+                            .catch(error => res.status(400).json({ error }));
+                        }
                     })
                     .catch(error => res.status(500).json({ error }));
                 }
-            })
-            .catch(error => res.status(400).json({ error }));
-        }
-        // Si la requête ne contient pas d'image on copie juste les infos de l'user contenu dans la requête
-        //  dans l'objet utilisateur
-        else{
-            userObject = {
-                email : user.email,
-                password: user.password,
-                avatar : user.avatar
-            };
-            bcrypt.compare(req.body.password, user.password)
-            .then(valid => {
-                if (!valid) { // Si le mdp est différent, on le modifie
-                    bcrypt.hash(req.body.password, 10)
-                    .then(hash => {
-                        userObject.password = hash;
+                // Si le mdp est le même, on modifie juste l'avatar
+                else{
+                    User.update({
+                        avatar: req.body.avatar
+                    }, 
+                    {
+                        where: {
+                            email: req.body.email
+                        }
                     })
-                    .catch(error => res.status(500).json({ error }));
+                    .then(nbrUserUpdate => res.status(200).json(nbrUserUpdate))
+                    .catch(error => res.status(400).json({ error }));
                 }
             })
             .catch(error => res.status(400).json({ error }));
-        }
-        console.log(userObject);
-        User.update(userObject, {
-            where: {
-                email: req.body.email
-            }
         })
-        .then(nbrUserUpdate => res.status(200).json(nbrUserUpdate))
-        .catch(error => res.status(400).json({ error }));
-    })
     .catch(error => res.status(500).json({ error }));
-    
 };
 
 exports.deleteUser = (req, res, next) => {
     User.findOne({
         where: {
-            id: req.params.id
+            email: req.body.email
         }
     })
     .then(user => {
-        const filename = user.imageUrl.split('/images/')[1];
-        fs.unlink(`images/${filename}`, () => {
-            User.destroy({
-                where: {
-                    id: req.params.id
-                }
-            })
-            .then(() => res.status(200).json({ message: 'Utilisateur supprimé avec succès !' }))
-            .catch(error => res.status(400).json({ error }));
-        });
+        const filename = user.avatar.split('/images/')[1];
+        if (filename !== 'avatar_default.png'){
+                fs.unlink(`images/${filename}`, (err) => {
+                    console.log('avatar supprimé avec succès');
+            });
+        }
+        User.destroy({
+            where: {
+                email: req.body.email
+            }
+        })
+        .then(() => res.status(200).json({ message: 'Utilisateur supprimé avec succès !' }))
+        .catch(error => res.status(400).json({ error }));
+        
     })
     .catch(error => res.status(500).json({ error }));
 };

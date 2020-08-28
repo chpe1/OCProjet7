@@ -9,7 +9,7 @@ const userCtrl = require('../controllers/user');
 
 router.post('/signup', multer, userCtrl.signup);
 router.put('/', auth, multer, userCtrl.modifyUser);
-router.delete('/:id', auth, userCtrl.deleteUser);
+router.delete('/', auth, userCtrl.deleteUser);
 router.post('/login', userCtrl.login);
 
 
