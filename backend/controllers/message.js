@@ -1,4 +1,6 @@
 const Message = require('../models/Message');
+const Like = require('../models/like');
+const { Sequelize } = require('sequelize');
 
 exports.createMessage = (req, res, next) => {
     Message.create({
@@ -9,19 +11,19 @@ exports.createMessage = (req, res, next) => {
     })
     .then((message) => res.status(201).json({ message }))
     .catch(error => res.status(400).json({ error }));
-  };
+};
 
-  exports.modifyMessage = (req, res, next) => {
+exports.modifyMessage = (req, res, next) => {
     Message.update(req.body, {
         where: {
             id: req.params.id
         }
     })  
-  .then(nbrMessageUpdate => res.status(200).json(nbrMessageUpdate))
-  .catch(error => res.status(400).json({ error }));
-  };
+    .then( () => res.status(200).json({ message : 'Message modifié avec succès !'}))
+    .catch(error => res.status(400).json({ error }));
+};
 
-  exports.deleteMessage = (req, res, next) => {
+exports.deleteMessage = (req, res, next) => {
     Message.destroy({
         where: {
             id: req.params.id
@@ -29,7 +31,7 @@ exports.createMessage = (req, res, next) => {
     })
     .then(() => res.status(200).json({ message: 'Message supprimé avec succès !' }))
     .catch(error => res.status(400).json({ error }));
-  };
+};
 
 exports.getOneMessage = (req, res, next) => {
     Message.findOne({
@@ -39,10 +41,62 @@ exports.getOneMessage = (req, res, next) => {
         })
         .then(message=> res.status(200).json(message))
         .catch(error => res.status(404).json({ error }));
-      };
+};
 
 exports.getAllMessages = (req, res, next) => {
     Message.findAll()
         .then(messages => res.status(200).json(messages))
         .catch(error => res.status(400).json({ error }));
-      };
+};
+
+exports.addLike = (req, res, next) => {
+    // Quand l'utilisateur clique sur j'aime,
+    // la requête part avec req.body.like à 1 s'il n'aimait pas déjà, à 0 si c'est pour enlever son like
+   
+    if (req.body.like === 1){
+            Message.increment({
+                like: 1
+            },{
+                where: {
+                    id: req.params.messageId
+                }
+            })
+            .then(() => res.status(200).json({ message: 'Un utilisateur de plus aime ce message !'}))
+            .catch(error => res.status(400).json({ error }));
+        
+        // ajouter une ligne à la table like avec le userId et le messageId
+        Like.create({
+            messageId: req.params.messageId,
+            userId: req.body.userId
+        })
+        .then(() => res.status(201).json({ message: 'UserId a été ajouté à la liste des users qui aime ce message' }))
+        .catch(error => res.status(400).json({ error }));
+    }
+    else if (req.body.like === 0){
+        // On enlève un like à la table message
+        Message.decrement({
+            like: 1
+        },{
+            where: {
+                id: req.params.messageId
+            }
+        })
+        .then(() => {
+            Like.destroy({
+                where: {
+                    [Sequelize.and]: [{ userId: req.body.userId },{ messageId: req.params.messageId }]               
+                }    
+            })
+            .then(() => res.status(201).json({ message: 'UserId a été retiré de la liste des users qui aime ce message'}))
+            .catch(error => res.status(404).json({ error }));
+        })
+        // res.status(200).json({message: 'Un utilisateur de moins aime ce message !'}))
+        .catch(error => res.status(400).json({ error }));
+
+        // On supprime la ligne correspondante
+        
+    }
+    else{
+        throw new Error ('Le like doit être de 1 ou 0');
+    }
+}

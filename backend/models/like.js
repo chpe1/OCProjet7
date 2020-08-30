@@ -8,11 +8,21 @@ const Like = sequelize.define('like', {
         allowNull: false,
         primaryKey: true
     },
-    type: Sequelize.TINYINT,
-    userId: Sequelize.INTEGER,
-    messageId: Sequelize.INTEGER
+    userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    messageId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    }
+},{
+    indexes: [
+    // crée un index unique sur userId et messageId
+    {
+      unique: true,
+      fields: ['userId', 'messageId']
+    }]
 });
-
-// GERER LE USERLIKES OU USERDISLIKES
 
 module.exports = Like;

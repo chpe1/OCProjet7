@@ -9,10 +9,14 @@ const Commentaire = sequelize.define('commentaire', {
         primaryKey: true
     },
     content: Sequelize.STRING,
-    userId: Sequelize.INTEGER,
-    messageId: Sequelize.INTEGER
+    userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    messageId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    }
 });
-
-// GERER LE USERLIKES OU USERDISLIKES
 
 module.exports = Commentaire;

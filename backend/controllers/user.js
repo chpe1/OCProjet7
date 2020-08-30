@@ -3,6 +3,11 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
+checkemail = (email) => {
+    let regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return regex.test(email);
+}
+
 exports.signup = (req, res, next) => {
     let avatarFile;
     if (req.file)
@@ -14,18 +19,25 @@ exports.signup = (req, res, next) => {
     }
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
-        User.create({
+        if (checkemail(req.body.email)){
+            User.create({
             email: req.body.email,
             password: hash,
-            avatar: avatarFile
-        })
-        .then(() => res.status(201).json({ message: 'Utilisateur créé avec succès !' }))
-        .catch(error => res.status(400).json({ error }));   
+            avatar: avatarFile,
+            isAdmin: req.body.isAdmin
+            })
+            .then(() => res.status(201).json({ message: 'Utilisateur créé avec succès !' }))
+            .catch(error => res.status(400).json({ error }));
+        }
+        else{
+            res.status(401).json({ message: 'Adresse email invalide' });
+        }  
     })
     .catch(error => res.status(500).json({ error }));
 };
 
 exports.login = (req, res, next) => {
+    // On transmet l'email dans le corps de la requête et on requête dessus car on ne doit pas pouvoir modifier l'email
     User.findOne({
         where: {
             email: req.body.email
@@ -55,6 +67,7 @@ exports.login = (req, res, next) => {
     .catch(error => res.status(500).json({ error }));
 };
 
+// On ne peut pas modifier son adresse email
 exports.modifyUser = (req, res, next) => { 
     User.findOne({
         where: {
@@ -64,6 +77,9 @@ exports.modifyUser = (req, res, next) => {
     .then(user =>{
         bcrypt.compare(req.body.password, user.password)
             .then(valid => {
+                if (req.body.avatar === ""){
+                    req.body.avatar = `${req.protocol}://${req.get('host')}/images/avatar_default.png`;
+                }
                 if (!valid) { // Si le mdp est différent, on le modifie
                     bcrypt.hash(req.body.password, 10)
                     .then(hash => {
@@ -78,7 +94,7 @@ exports.modifyUser = (req, res, next) => {
                                     email: req.body.email
                                 }
                             })
-                            .then(nbrUserUpdate => res.status(200).json(nbrUserUpdate))
+                            .then(() => res.status(200).json({ message : 'Profil modifié avec succès !'}))
                             .catch(error => res.status(400).json({ error }));
                         }
                         // Si la requête ne contient pas de fichier
@@ -92,7 +108,7 @@ exports.modifyUser = (req, res, next) => {
                                     email: req.body.email
                                 }
                             })
-                            .then(nbrUserUpdate => res.status(200).json(nbrUserUpdate))
+                            .then(() => res.status(200).json({ message : 'Profil modifié avec succès !'}))
                             .catch(error => res.status(400).json({ error }));
                         }
                     })
@@ -108,7 +124,7 @@ exports.modifyUser = (req, res, next) => {
                             email: req.body.email
                         }
                     })
-                    .then(nbrUserUpdate => res.status(200).json(nbrUserUpdate))
+                    .then(() => res.status(200).json({ message : 'Avatar modifié avec succès !'}))
                     .catch(error => res.status(400).json({ error }));
                 }
             })

@@ -9,9 +9,10 @@ const sequelize = require('./database');
 
 const userRoutes = require('./routes/user');
 const messageRoutes = require('./routes/message');
+const commentsRoutes = require('./routes/commentaires');
+const adminRoutes = require('./routes/admin');
 
-
-// Crée la table si elle n'existe pas déjà selon le format contenu dans user.js
+// Crée les tables si elles n'existent pas déjà selon les formats contenus dans models
 sequelize.sync();
 
 app.use(bodyParser.json());
@@ -23,9 +24,14 @@ app.use((req, res, next) => {
   next();
 });
 
+
+
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/messages', messageRoutes);
 app.use('/api/auth', userRoutes);
+app.use('/api/comments', commentsRoutes);
+app.use('/api/admin', adminRoutes);
+
 
 
 module.exports = app;

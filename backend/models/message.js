@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const sequelize = require('./../database');
-const Commentaire = require('./commentaire');
+const Commentaire = require('./commentaires');
 const User = require('./user');
 const Like = require('./like');
 
@@ -17,13 +17,11 @@ const Message = sequelize.define('message', {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    like: Sequelize.TINYINT
+    like: Sequelize.TINYINT.UNSIGNED
 });
 
 Message.hasMany(Commentaire, {as: 'reactors'});
 Message.hasMany(Like, {as: 'likers'});
 Message.belongsTo(User, {foreignKey: 'userId'});
-
-// GERER LE USERLIKES OU USERDISLIKES
 
 module.exports = Message;
