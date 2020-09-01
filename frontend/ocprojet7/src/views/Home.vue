@@ -20,7 +20,7 @@ export default {
 
 <style scoped>
 .home img{
-  width: 300px;
+  width: 250px;
 }
 /* .home{
   border: 1px solid green;

@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <form id="formUser" class="formUser">
+    <form id="formUser" class="formUser" @submit.prevent="login" action="/about">
           <h1>LOGIN</h1>
             <div class="form-group">
               <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Entrez votre email" v-model="email">
@@ -13,13 +13,16 @@
               <input type="checkbox" class="form-check-input" id="souvenir">
               <label class="form-check-label" for="souvenir">Se souvenir de moi</label>
             </div>
-            <button type="submit" @submit.prevent="login">Connexion</button>
+            <button type="submit">Connexion</button>
         </form>
         <p class="text-center">{{ info }}</p>
   </div>
 </template>
 
 <script>
+// const axios= require('axios');
+import axios from 'axios'
+
 export default {
   name: 'FormUser',
   data: function() {
@@ -31,9 +34,27 @@ export default {
         },
   methods: {
     login() {
-        // axios.post('https://localhost:3000/api/auth/login'), this.email, this.password
-        // .then(response => (this.info = response))
-        // .catch(error => console.log(error));
+        // let body = {
+        //   'email': this.email,
+        //   'password': this.password
+        // }
+        // axios({
+        //   method: 'post',
+        //   url: 'http://localhost:3000/api/auth/login',
+        //   body: JSON.stringify(body)
+        // })
+        axios.post('http://localhost:3000/api/auth/login',{
+          'email': this.email,
+          'password': this.password
+        })
+        .then(response => {
+          if (response.data.isAdmin){
+            this.$router.push('/admin');
+          }else{
+            this.$router.push('/messages');
+          }
+        })
+        .catch(error => this.info = error);
         }
   }
 }

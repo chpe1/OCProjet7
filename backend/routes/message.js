@@ -14,7 +14,7 @@ router.put('/:id', auth, messageCtrl.modifyMessage);
 // Un utilisateur peut supprimer son message
 router.delete('/:id', auth, messageCtrl.deleteMessage);
 // Un utilisateur peut voir tous les messages
-router.get('/', auth, messageCtrl.getAllMessages);
+router.get('/',auth, messageCtrl.getAllMessages);
 // Un utilisateur peut obtenir un message
 router.get('/:id', auth, messageCtrl.getOneMessage);
 // Un utilisateur peut liker un message
