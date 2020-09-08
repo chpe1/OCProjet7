@@ -23,8 +23,7 @@ export default {
   data: function() {
             return {
                     info: '',
-                    title: '',
-                    content: '',
+                    content: ''
             }
         },
   components: {
@@ -32,18 +31,19 @@ export default {
   },
   computed: {
       ...mapState({
-          email: 'email'
+          email: 'email',
+          userId: "userId",
+          token: "token"
       })
   },
   methods: {
     sentMessage() {
         axios.post('http://localhost:3000/api/messages',{
-          'title': this.title,
           'content': this.content,
-          'userId' : localStorage.getItem('userId')
+          'userId' : this.userId
         },{
         headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': 'Bearer ' + this.token
         }
         })
         .then(() => this.info = 'Message bien envoyé !')
