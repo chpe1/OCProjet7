@@ -1,4 +1,5 @@
 const Commentaire = require('../models/Commentaires');
+const User = require('../models/User');
 
 exports.createComment = (req, res, next) => {
     Commentaire.create({
@@ -34,7 +35,14 @@ exports.getAllComments = (req, res, next) => {
     Commentaire.findAll({
         where: {
             messageId: req.params.messageId
-        }
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ],
+        include: [{
+            model: User,
+            attributes: ['email', 'id']
+        }]
     })
     .then(commentaires => res.status(200).json(commentaires))
     .catch(error => res.status(400).json({ error }));

@@ -8,6 +8,20 @@
   </div>
 </template>
 
+<script>
+if (localStorage.getItem('token')){
+  // this.$store.commit('SETTOKEN', localStorage.getItem('token'));
+  // this.$store.commit('SETADMIN', localStorage.getItem('isAdmmin'));
+  // this.$store.commit('SETUSERID', localStorage.getItem('userId'));
+  // this.$store.commit('SETEMAIL', localStorage.getItem('email'));
+  
+  // this.$store.state.token = localStorage.getItem('token');
+  // this.$store.state.email = localStorage.getItem('email');
+  // this.$store.state.userId = localStorage.getItem('userId');
+  // this.$store.state.isAdmin = localStorage.getItem('isAdmin');
+}
+</script>
+
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -22,7 +36,7 @@
 
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: blue;
 
     &.router-link-exact-active {
       color: #42b983;

@@ -1,10 +1,10 @@
-const Message = require('../models/Message');
+const Message = require('../models/message');
 const Like = require('../models/like');
+const User = require('../models/user');
 const { Sequelize } = require('sequelize');
 
 exports.createMessage = (req, res, next) => {
     Message.create({
-        title: req.body.title,
         content: req.body.content,
         userId: req.body.userId,
         like: 0
@@ -44,7 +44,16 @@ exports.getOneMessage = (req, res, next) => {
 };
 
 exports.getAllMessages = (req, res, next) => {
-    Message.findAll()
+    Message.findAll({
+        attributes: ['id', 'content', 'userId', 'like', 'createdAt', 'updatedAt'],
+        order: [
+            ['createdAt', 'DESC']
+        ],
+        include: {
+            model: User,
+            attributes: ['email', 'avatar']
+        }
+    })
         .then(messages => res.status(200).json(messages))
         .catch(error => res.status(400).json({ error }));
 };

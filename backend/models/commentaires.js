@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../database');
+const User = require('../models/user');
 
 const Commentaire = sequelize.define('commentaire', {
     id: { 
@@ -18,5 +19,7 @@ const Commentaire = sequelize.define('commentaire', {
         allowNull: false
     }
 });
+
+Commentaire.belongsTo(User, {foreignKey: 'userId'});
 
 module.exports = Commentaire;

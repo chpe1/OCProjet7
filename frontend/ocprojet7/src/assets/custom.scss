@@ -14,8 +14,9 @@ $bv-enable-table-stacked: false;
 
 $headings-font-family: "Times New Roman", Times, serif;
 
-$body-bg: #686767;
-$body-color: rgb(241, 241, 241);
+// $body-bg: #686767;
+$body-bg: #262626;
+$body-color: white;
 
 // Include Bootstrap and BootstrapVue SCSS files
 @import '~bootstrap/scss/bootstrap.scss';

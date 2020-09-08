@@ -1,6 +1,6 @@
 <template>
-  <div class="hello">
-    <form id="formUser" class="formUser" @submit.prevent="login" action="/about">
+  <div class="login">
+    <form id="formUser" class="formUser" @submit.prevent="login">
           <h1>LOGIN</h1>
             <div class="form-group">
               <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Entrez votre email" v-model="email">
@@ -10,8 +10,8 @@
               <input type="password" class="form-control" id="password" placeholder="Mot de passe" v-model="password">
             </div>
             <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="souvenir">
-              <label class="form-check-label" for="souvenir">Se souvenir de moi</label>
+              <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe" v-model="rememberMe">
+              <label class="form-check-label" for="rememberMe">Se souvenir de moi</label>
             </div>
             <button type="submit">Connexion</button>
         </form>
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-// const axios= require('axios');
+
 import axios from 'axios'
 
 export default {
@@ -29,30 +29,33 @@ export default {
             return {
                     info: '',
                     email: '',
-                    password: ''
+                    password: '',
+                    rememberMe: ''
             }
         },
   methods: {
     login() {
-        // let body = {
-        //   'email': this.email,
-        //   'password': this.password
-        // }
-        // axios({
-        //   method: 'post',
-        //   url: 'http://localhost:3000/api/auth/login',
-        //   body: JSON.stringify(body)
-        // })
         axios.post('http://localhost:3000/api/auth/login',{
           'email': this.email,
           'password': this.password
         })
         .then(response => {
-          if (response.data.isAdmin){
-            this.$router.push('/admin');
-          }else{
-            this.$router.push('/messages');
+          if (this.rememberMe ===  true){
+            localStorage.clear();
+            localStorage.userId = response.data.userId;
+            localStorage.token = response.data.token;
+            localStorage.email = response.data.email;
+            localStorage.isAdmin = response.data.isAdmin;
+            localStorage.avatar = response.data.avatar;
           }
+          else{
+            this.$store.commit('SETTOKEN', response.data.token);
+            this.$store.commit('SETADMIN', response.data.isAdmin);
+            this.$store.commit('SETUSERID', response.data.userId);
+            this.$store.commit('SETEMAIL', response.data.email);
+            this.$store.commit('SETAVATAR', response.data.avatar);
+          }         
+          return this.$router.push('/messages');
         })
         .catch(error => this.info = error);
         }
@@ -62,7 +65,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.hello{
+.login{
     margin: auto;
     // border: 1px solid yellow;
 }

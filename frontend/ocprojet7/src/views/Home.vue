@@ -2,7 +2,9 @@
   <div class="home">
     <p class="text-center"><img alt="logo" src="../assets/images/groupomania-mini.png"></p>
     <p class="text-center">Bienvenue sur le réseau social de Groupomania</p>
-    <FormUser/>
+    <div class="row">
+     <FormUser/>
+    </div>
   </div>
 </template>
 

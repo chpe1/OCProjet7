@@ -45,12 +45,12 @@ exports.login = (req, res, next) => {
     })
     .then(user => {
         if (!user){
-            return res.status(401).json({ error: 'Utilisateur non trouvé !' });
+            return res.status(401).json({ message: 'Utilisateur non trouvé !' });
         }
         bcrypt.compare(req.body.password, user.password)
         .then(valid => {
             if (!valid) {
-                return res.status(401).json({ error: 'Mot de passe incorrect !' });
+                return res.status(401).json({ message: 'Mot de passe incorrect !' });
             }
             res.status(200).json({
                 userId: user.id,
@@ -59,7 +59,9 @@ exports.login = (req, res, next) => {
                   'RANDOM_TOKEN_SECRET',
                   { expiresIn: '24h' },
                 ),
-                isAdmin: user.isAdmin
+                email: user.email,
+                isAdmin: user.isAdmin, 
+                avatar: user.avatar
             });
         })
         .catch(error => res.status(500).json({ error }));
@@ -75,7 +77,8 @@ exports.modifyUser = (req, res, next) => {
         }
     })
     .then(user =>{
-        bcrypt.compare(req.body.password, user.password)
+        if (req.body.password != ""){
+           bcrypt.compare(req.body.password, user.password)
             .then(valid => {
                 if (req.body.avatar === ""){
                     req.body.avatar = `${req.protocol}://${req.get('host')}/images/avatar_default.png`;
@@ -116,20 +119,63 @@ exports.modifyUser = (req, res, next) => {
                 }
                 // Si le mdp est le même, on modifie juste l'avatar
                 else{
-                    User.update({
-                        avatar: req.body.avatar
-                    }, 
-                    {
-                        where: {
-                            email: req.body.email
-                        }
-                    })
-                    .then(() => res.status(200).json({ message : 'Avatar modifié avec succès !'}))
-                    .catch(error => res.status(400).json({ error }));
+                    if (req.file){
+                        User.update({
+                            avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                        }, 
+                        {
+                            where: {
+                                email: req.body.email
+                            }
+                        })
+                        .then(() => res.status(200).json({ message : 'Avatar modifié avec succès !'}))
+                        .catch(error => res.status(400).json({ error }));
+                    }
+                    // Si la requête ne contient pas de fichier
+                    else{
+                        User.update({
+                            avatar: req.body.avatar
+                        }, 
+                        {
+                            where: {
+                                email: req.body.email
+                            }
+                        })
+                        .then(() => res.status(200).json({ message : 'Avatar modifié avec succès !'}))
+                        .catch(error => res.status(400).json({ error }));
+                    }
                 }
             })
-            .catch(error => res.status(400).json({ error }));
-        })
+            .catch(error => res.status(400).json({ error })) 
+        }
+        else{
+            if (req.file){
+                User.update({
+                    avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                }, 
+                {
+                    where: {
+                        email: req.body.email
+                    }
+                })
+                .then(() => res.status(200).json({ message : 'Avatar modifié avec succès !'}))
+                .catch(error => res.status(400).json({ error }));
+            }
+            // Si la requête ne contient pas de fichier
+            else{
+                User.update({
+                    avatar: req.body.avatar
+                }, 
+                {
+                    where: {
+                        email: req.body.email
+                    }
+                })
+                .then(() => res.status(200).json({ message : 'Avatar modifié avec succès !'}))
+                .catch(error => res.status(400).json({ error }));
+            }
+        }
+    })
     .catch(error => res.status(500).json({ error }));
 };
 
