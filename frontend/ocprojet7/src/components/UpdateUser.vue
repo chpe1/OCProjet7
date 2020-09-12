@@ -22,6 +22,7 @@
           </fieldset>
             <button type="submit">Modifier votre profil</button>
         </form>
+        <DeleteUser></DeleteUser>
         <p class="text-center">{{ info }}</p>
       </div>
     </div>
@@ -31,6 +32,7 @@
 <script>
 import { mapState } from 'vuex'
 import axios from 'axios'
+import DeleteUser from '@/components/DeleteUser.vue'
 
 export default {
 
@@ -43,10 +45,14 @@ export default {
                     maxFileSize: 1048576
                   }
       },
+  components: {
+      DeleteUser
+  },
   computed: {
         ...mapState({
           email: 'email',
-          avatar: 'avatar'
+          avatar: 'avatar',
+          token: 'token'
       })
     },
   methods: {
@@ -68,15 +74,15 @@ export default {
       formData.append('password', this.password);
       axios.put('http://localhost:3000/api/auth/', formData, {
         headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': 'Bearer ' + this.token
           }
         })
       .then((response) => {
-        let emplacementImage = 'http://localhost:3000/images/' + file.name;
+        
         if (localStorage.avatar){ // On modifie l'avatar dans le localstorage s'il existe
-            localStorage.avatar = emplacementImage;
+            localStorage.avatar = response.data.avatar;
             }
-        this.$store.commit('SETAVATAR', emplacementImage); // On modifie l'avatar dans le store.
+        this.$store.commit('SETAVATAR', response.data.avatar); // On modifie l'avatar dans le store.
         return this.info = response.data.message
         })
       .catch(error => this.info = error);

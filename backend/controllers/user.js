@@ -97,7 +97,7 @@ exports.modifyUser = (req, res, next) => {
                                     email: req.body.email
                                 }
                             })
-                            .then(() => res.status(200).json({ message : 'Profil modifié avec succès !'}))
+                            .then(() => res.status(200).json({message : 'Profil modifié', avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`}))
                             .catch(error => res.status(400).json({ error }));
                         }
                         // Si la requête ne contient pas de fichier
@@ -111,7 +111,7 @@ exports.modifyUser = (req, res, next) => {
                                     email: req.body.email
                                 }
                             })
-                            .then(() => res.status(200).json({ message : 'Profil modifié avec succès !'}))
+                            .then(() => res.status(200).json({message : 'Profil modifié', avatar: req.body.avatar}))
                             .catch(error => res.status(400).json({ error }));
                         }
                     })
@@ -128,7 +128,7 @@ exports.modifyUser = (req, res, next) => {
                                 email: req.body.email
                             }
                         })
-                        .then(() => res.status(200).json({ message : 'Avatar modifié avec succès !'}))
+                        .then(() => res.status(200).json({message : 'Profil modifié', avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`}))
                         .catch(error => res.status(400).json({ error }));
                     }
                     // Si la requête ne contient pas de fichier
@@ -141,7 +141,7 @@ exports.modifyUser = (req, res, next) => {
                                 email: req.body.email
                             }
                         })
-                        .then(() => res.status(200).json({ message : 'Avatar modifié avec succès !'}))
+                        .then(() => res.status(200).json({message : 'Profil modifié', avatar: req.body.avatar}))
                         .catch(error => res.status(400).json({ error }));
                     }
                 }
@@ -158,7 +158,7 @@ exports.modifyUser = (req, res, next) => {
                         email: req.body.email
                     }
                 })
-                .then(() => res.status(200).json({ message : 'Avatar modifié avec succès !'}))
+                .then(() => res.status(200).json({message : 'Profil modifié', avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`}))
                 .catch(error => res.status(400).json({ error }));
             }
             // Si la requête ne contient pas de fichier
@@ -171,7 +171,7 @@ exports.modifyUser = (req, res, next) => {
                         email: req.body.email
                     }
                 })
-                .then(() => res.status(200).json({ message : 'Avatar modifié avec succès !'}))
+                .then(() => res.status(200).json({message : 'Profil modifié', avatar: req.body.avatar}))
                 .catch(error => res.status(400).json({ error }));
             }
         }

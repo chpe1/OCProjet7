@@ -2,11 +2,11 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-    userId: 2,
-    isAdmin: '1',
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTU5OTU4ODc0MiwiZXhwIjoxNTk5Njc1MTQyfQ.gZyMtjXemPJvIW0paCAC2NsAYqS1gp9SgaYUFeRporE',
-    email: 'celine@test.com',
-    avatar: 'http://localhost:3000/images/avatar_default.png'
+    userId: '',
+    isAdmin: '',
+    token: '',
+    email: '',
+    avatar: ''
   },
   getters: {
     getIsAdmin: state => {

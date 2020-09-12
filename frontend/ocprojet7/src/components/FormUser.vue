@@ -48,13 +48,11 @@ export default {
             localStorage.isAdmin = response.data.isAdmin;
             localStorage.avatar = response.data.avatar;
           }
-          else{
-            this.$store.commit('SETTOKEN', response.data.token);
-            this.$store.commit('SETADMIN', response.data.isAdmin);
-            this.$store.commit('SETUSERID', response.data.userId);
-            this.$store.commit('SETEMAIL', response.data.email);
-            this.$store.commit('SETAVATAR', response.data.avatar);
-          }         
+          this.$store.commit('SETTOKEN', response.data.token);
+          this.$store.commit('SETADMIN', response.data.isAdmin);
+          this.$store.commit('SETUSERID', response.data.userId);
+          this.$store.commit('SETEMAIL', response.data.email);
+          this.$store.commit('SETAVATAR', response.data.avatar);
           return this.$router.push('/messages');
         })
         .catch(error => this.info = error);
