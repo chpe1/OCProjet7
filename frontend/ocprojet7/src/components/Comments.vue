@@ -1,6 +1,5 @@
 <template>
   <div class="comments">
-      <!-- <p>{{ info }}</p> -->
     <div class="my-3 p-3 bg-dark rounded box-shadow" v-for="item in info.data" :key="item">
         <p class="text-left"><em>{{ item.user.email }}</em></p>
         <p class="text-left">{{ item.content }}</p>
