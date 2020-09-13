@@ -3,6 +3,7 @@ const Message = require("../models/message");
 const Commentaire = require("../models/commentaires");
 
 exports.getAllUsers = (req, res, next) => {
+    console.log('flag')
     User.findAll()
     .then(users=> res.status(200).json(users))
     .catch(error => res.status(404).json({ error }));
