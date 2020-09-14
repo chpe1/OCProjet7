@@ -2,15 +2,7 @@
   <div class="getusers">
     <div class="row">
       <div class="col-12">
-        <!-- <form id="formGetUsers" class="formGetUsers" @submit.prevent="getAllUsers">
-            <select name="user" id="userSelect">
-                <option name=""></option>
-            </select>
-            <button type="submit">Sélectionner l'utilisateur</button>
-        </form> -->
-        <p class="plink text-center" @click="getAllUsers">Afficher tous les utilisateurs</p>
-        <!-- Le v-if permet de ne pas afficher les titres du tableau si celui-ci est vide-->
-        <table class="table table-striped" v-if="users != ''">
+        <table class="table table-striped">
             <thead>
                 <tr>
                 <th scope="col">id</th>
@@ -57,7 +49,7 @@
             <caption>Liste des 5 derniers commentaires publiés par l'utilisateur</caption>
             <thead>
                 <tr>
-                <th scope="col">id du message</th>
+                <th scope="col">id du commentaire</th>
                 <th scope="col">Contenu</th>
                 <th scope="col">Id du message commenté</th>
                 <th scope="col">Date de Création</th>
@@ -121,6 +113,9 @@ export default {
         })
       .catch(error => this.info = error);
     }
+  },
+  beforeMount(){ 
+    this.getAllUsers() 
   }
 }
 </script>
@@ -146,67 +141,4 @@ caption {
   font-size: 2em;
 }
 
-/* .formUpdateUser {
-    max-width: 500px;
-    margin: auto;
-    padding: 40px;
-    position: relative;
-    background: #191919;
-    text-align: center;
-    transition: 0.25s;
-}
-
-.formUpdateUser input[type="password"] {
-    border: 0;
-    background: none;
-    display: block;
-    margin: 20px auto;
-    text-align: center;
-    border: 2px solid #3498db;
-    padding: 10px 10px;
-    outline: none;
-    max-width: 250px;
-    color: white;
-    border-radius: 24px;
-    transition: 0.25s
-}
-
-.formUpdateUser input[type="password"]:focus {
-    max-width: 300px;
-    border-color: #2ecc71
-}
-
-.formUpdateUser button[type="submit"] {
-    border: 0;
-    background: none;
-    display: block;
-    margin: 20px auto;
-    text-align: center;
-    border: 2px solid #2ecc71;
-    padding: 14px 40px;
-    outline: none;
-    color: white;
-    border-radius: 24px;
-    transition: 0.25s;
-    cursor: pointer
-}
-
-.formUpdateUser input[type="file"] {
-    border: 0;
-    background: none;
-    display: block;
-    margin: 20px auto;
-    text-align: center;
-    border: 2px solid #3498db;
-    padding: 10px 10px;
-    outline: none;
-    max-width: 250px;
-    color: white;
-    border-radius: 24px;
-    transition: 0.25s
-}
-
-.formUpdateUser button[type="submit"]:hover {
-    background: #2ecc71
-} */
 </style>
