@@ -9,7 +9,8 @@
             <button type="submit">Sélectionner l'utilisateur</button>
         </form> -->
         <p class="plink text-center" @click="getAllUsers">Afficher tous les utilisateurs</p>
-        <table class="table table-striped">
+        <!-- Le v-if permet de ne pas afficher les titres du tableau si celui-ci est vide-->
+        <table class="table table-striped" v-if="users != ''">
             <thead>
                 <tr>
                 <th scope="col">id</th>
@@ -21,13 +22,55 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in info" :key="item">
-                    <th scope="row">{{ item.id }}</th>
-                    <td>{{ item.email }}</td>
-                    <td>{{ item.avatar }}</td>
-                    <td>{{ item.isAdmin }}</td>
-                    <td>{{ item.createdAt }}</td>
-                    <td>{{ item.updatedAt }}</td>
+                <tr v-for="user in users" :key="user">
+                    <th scope="row">{{ user.id }}</th>
+                    <td class="plink" @click="getOneUser(user.id)">{{ user.email }}</td>
+                    <td>{{ user.avatar.split('/images/')[1] }}</td>
+                    <td>{{ user.isAdmin }}</td>
+                    <td>{{ user.createdAt }}</td>
+                    <td>{{ user.updatedAt }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-striped" v-if="messages != ''">
+            <caption>Liste des 5 derniers messages publiés par l'utilisateur</caption>
+            <thead>
+                <tr>
+                <th scope="col">id du message</th>
+                <th scope="col">Contenu</th>
+                <th scope="col">Nombre de "j'aime"</th>
+                <th scope="col">Date de Création</th>
+                <th scope="col">Date de Modification</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="message in messages" :key="message">
+                    <th scope="row">{{ message.id }}</th>
+                    <td>{{ message.content }}</td>
+                    <td>{{ message.like }}</td>
+                    <td>{{ message.createdAt }}</td>
+                    <td>{{ message.updatedAt }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-striped" v-if="comments != ''">
+            <caption>Liste des 5 derniers commentaires publiés par l'utilisateur</caption>
+            <thead>
+                <tr>
+                <th scope="col">id du message</th>
+                <th scope="col">Contenu</th>
+                <th scope="col">Id du message commenté</th>
+                <th scope="col">Date de Création</th>
+                <th scope="col">Date de Modification</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="comment in comments" :key="comment">
+                    <th scope="row">{{ comment.id }}</th>
+                    <td>{{ comment.content }}</td>
+                    <td>{{ comment.messageId }}</td>
+                    <td>{{ comment.createdAt }}</td>
+                    <td>{{ comment.updatedAt }}</td>
                 </tr>
             </tbody>
         </table>
@@ -45,7 +88,9 @@ export default {
   name: 'AdminUsers',
   data: function() {
     return {
-            info: '',
+            users: '',
+            messages: '',
+            comments: ''
             }
       },
   computed: {
@@ -60,7 +105,20 @@ export default {
             'Authorization': 'Bearer ' + this.token
           }
         })
-      .then((response) => this.info = response.data)
+      .then((response) => this.users = response.data)
+      .catch(error => this.users = error);
+    },
+    getOneUser(userId){
+      let url = 'http://localhost:3000/api/admin/users/' + userId;
+      axios.get(url, {
+        headers: {
+            'Authorization': 'Bearer ' + this.token
+          }
+        })
+      .then((response) => {
+        this.messages = response.data.message
+        this.comments = response.data.commentaires
+        })
       .catch(error => this.info = error);
     }
   }
@@ -75,6 +133,17 @@ export default {
 .plink{
     cursor: pointer;
     text-decoration: underline;
+}
+
+.getusers{
+    width: 100%;
+}
+
+caption { 
+  caption-side: top;
+  text-align: center;
+  color: white;
+  font-size: 2em;
 }
 
 /* .formUpdateUser {
