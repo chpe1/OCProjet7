@@ -127,7 +127,12 @@ export default {
 
 .plink{
     cursor: pointer;
-    text-decoration: underline;
+    text-decoration: none;
+}
+
+.plink:hover{
+  color: #3498db;
+  text-decoration: underline;
 }
 
 .getusers{

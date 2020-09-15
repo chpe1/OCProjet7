@@ -23,13 +23,13 @@
 
 import axios from 'axios'
 import Comments from '@/components/Comments.vue'
+import { mapState } from 'vuex'
 
 export default {
   name: 'DisplayMessages',
   data: function() {
             return {
                     info: '',
-                    token: this.$store.getters.getToken,
                     showComments: false,
                     textButton: 'Voir les commentaires'
             }
@@ -38,7 +38,9 @@ export default {
       Comments
   },
   computed: {
-      
+    ...mapState({
+    token: 'token'
+    })
   },
   methods: {
       changeTextButton(){
@@ -58,7 +60,7 @@ export default {
   mounted() {
       axios.get('http://localhost:3000/api/messages/',{
         headers: {
-            'Authorization': 'Bearer ' + this.$store.getters.getToken
+            'Authorization': 'Bearer ' + this.token
             }
         })
         .then(response => this.info = response)

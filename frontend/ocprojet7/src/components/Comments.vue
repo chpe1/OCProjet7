@@ -10,6 +10,7 @@
 <script>
 
 import axios from 'axios'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Comments',
@@ -21,14 +22,18 @@ export default {
   },
   data: function() {
             return {
-                    info: '',
-                    token: this.$store.getters.getToken
+                    info: ''
             }
         },
+    computed: {
+        ...mapState({
+          token: 'token'
+      })
+    },
   mounted() {
       axios.get('http://localhost:3000/api/comments/'+ this.messageId,{
         headers: {
-            'Authorization': 'Bearer ' + this.$store.getters.getToken
+            'Authorization': 'Bearer ' + this.token
             }
         })
         .then(response => this.info = response)
