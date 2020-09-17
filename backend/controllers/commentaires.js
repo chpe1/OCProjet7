@@ -41,7 +41,7 @@ exports.getAllComments = (req, res, next) => {
         ],
         include: [{
             model: User,
-            attributes: ['email', 'id']
+            attributes: ['email', 'id', 'avatar']
         }]
     })
     .then(commentaires => res.status(200).json(commentaires))

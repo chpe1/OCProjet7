@@ -2,8 +2,8 @@
   <div class="getusers">
     <div class="row">
       <div class="col-12">
-        <table class="table table-striped">
-            <thead>
+        <table class="table table-light table-striped">
+            <thead class="thead-dark">
                 <tr>
                 <th scope="col">id</th>
                 <th scope="col">Email</th>
@@ -24,9 +24,9 @@
                 </tr>
             </tbody>
         </table>
-        <table class="table table-striped" v-if="messages != ''">
+        <table class="table table-light table-striped" v-if="messages != ''">
             <caption>Liste des 5 derniers messages publiés par l'utilisateur</caption>
-            <thead>
+            <thead class="thead-dark">
                 <tr>
                 <th scope="col">id du message</th>
                 <th scope="col">Contenu</th>
@@ -45,9 +45,9 @@
                 </tr>
             </tbody>
         </table>
-        <table class="table table-striped" v-if="comments != ''">
+        <table class="table table-light table-striped" v-if="comments != ''">
             <caption>Liste des 5 derniers commentaires publiés par l'utilisateur</caption>
-            <thead>
+            <thead class="thead-dark">
                 <tr>
                 <th scope="col">id du commentaire</th>
                 <th scope="col">Contenu</th>
@@ -121,6 +121,10 @@ export default {
 </script>
 
 <style scoped>
+.table{
+  color: black;
+}
+
 .avatar img{
     width: 100px;
 }

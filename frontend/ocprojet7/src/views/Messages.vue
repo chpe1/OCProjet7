@@ -16,6 +16,7 @@
       <div class="userAccount col-3">
         <p><img :src="avatar" alt="Avatar"/></p>
         <p>Vous êtes connecté en tant que : <router-link to="/user">{{ email }}</router-link></p>
+        <p><router-link to="/user">Modifier mon profil</router-link></p>
       </div>
       <div class="formMessage col-9">
         <FormMessage/>

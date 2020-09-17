@@ -21,5 +21,6 @@ const Commentaire = sequelize.define('commentaire', {
 });
 
 Commentaire.belongsTo(User, {foreignKey: 'userId'});
+// Ajouter une clé étrangère vers le message
 
 module.exports = Commentaire;
