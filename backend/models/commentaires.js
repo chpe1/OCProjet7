@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../database');
-const User = require('../models/user');
+const User = require('./user');
+const Message = require('./message');
 
 const Commentaire = sequelize.define('commentaire', {
     id: { 
@@ -21,6 +22,7 @@ const Commentaire = sequelize.define('commentaire', {
 });
 
 Commentaire.belongsTo(User, {foreignKey: 'userId'});
-// Ajouter une clé étrangère vers le message
+// Commentaire.belongsTo(Message, {foreignKey: 'messageId'});
+
 
 module.exports = Commentaire;
