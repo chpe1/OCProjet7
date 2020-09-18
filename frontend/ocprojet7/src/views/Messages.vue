@@ -19,7 +19,7 @@
         <p><router-link to="/user">Modifier mon profil</router-link></p>
       </div>
       <div class="formMessage col-9">
-        <FormMessage/>
+        <DisplayMessages/>
       </div>
     </div>
   </div>
@@ -28,14 +28,14 @@
 
 <script>
 // @ is an alias to /src
-import FormMessage from '@/components/FormMessage.vue'
+import DisplayMessages from '@/components/DisplayMessages.vue'
 import { mapState } from 'vuex'
 // import { mapGetters } from 'vuex'
 
 export default {
   name: 'Messages',
   components: {
-    FormMessage
+    DisplayMessages
   }, 
   computed: {
         // ...mapGetters(['getIsAdmin'])
