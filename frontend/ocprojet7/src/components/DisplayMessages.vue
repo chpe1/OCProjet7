@@ -1,22 +1,25 @@
 <template>
 <div>
-    <div class="my-3 p-3 bg-dark rounded box-shadow" v-for="item in info.data" :key="item">
+    <!-- Affichage des messages -->
+    <div class="my-3 p-3 bg-dark rounded box-shadow" v-for="message in info.data" :key="message">
         <div class="media text-white text-left pt-3 mb-3">
-            <img :src="item.user.avatar" alt="avatar" class="mr-2 rounded avatar">
+            <img :src="message.user.avatar" alt="avatar" class="mr-2 rounded avatar">
             <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-            <strong class="d-block text-gray-dark">{{ item.user.email }}</strong>
-            {{ item.content }} </p>
+            <strong class="d-block text-gray-dark">{{ message.user.email }}</strong>
+            {{ message.content }} </p>
         </div>
+        <!-- Liens pour modifier / supprimer les messages et voir les commentaires -->
         <small class="text-right text-info">
             <p>
-                <span class="plink" @click="editMessage(item.id, item.content)">Modifier le message</span>&ensp;
-                <span v-if="showComments != item.id" class="plink" @click="getComments(item.id)">Voir les commentaires</span>
+                <span class="plink" @click="editMessage(message.id, message.content)">Modifier le message</span>&ensp;
+                <span class="plink" @click="deleteMessage(message.id)">Supprimer le message</span>&ensp;
+                <span v-if="showComments != message.id" class="plink" @click="getComments(message.id)">Voir les commentaires</span>
                 <span v-else class="plink" @click="hideComments">Cacher les commentaires</span> 
             </p>
         </small>
-
-        <div v-if="showEditMessage===item.id">
-            <form id="formEditMessage" class="formEditMessage" @submit.prevent="sentEditMessage(item.id)">
+        <!-- Formulaire d'édition d'un message -->
+        <div v-if="showEditMessage===message.id">
+            <form id="formEditMessage" class="formEditMessage" @submit.prevent="sentEditMessage(message.id)">
                 <h3 class="text-center">Modifier le message :</h3>
                 <div class="form-group">
                     <textarea class="form-control" id="message" aria-describedby="messageHelp" rows="4" v-model="content" required></textarea>
@@ -25,11 +28,10 @@
             </form>
             <p class="text-center">{{ response }}</p>
         </div>
-
-        <div v-if="showComments===item.id">
-            <!-- Formulaire d'ajout de commentaire -->
+        <!-- Formulaire d'ajout de commentaire -->
+        <div v-if="showComments===message.id">
             <div class="comments my-3 p-3 bg-light rounded box-shadow">
-                <form id="formNewComment" class="formNewComment" @submit.prevent="sentNewComment(item.id)">
+                <form id="formNewComment" class="formNewComment" @submit.prevent="sentNewComment(message.id)">
                     <div class="form-group">
                         <textarea class="form-control" id="createcomment" rows="4" v-model="newComment" required></textarea>
                     </div>
@@ -47,10 +49,11 @@
                             {{ comment.content }}
                         </p>
                     </div>
-                    <!-- Lien pour modifier un commentaire -->
+                    <!-- Lien pour modifier / supprimer un commentaire -->
                     <small class="text-right text-info">
                         <p>
                             <span class="plink" @click="editComment(comment.id, comment.content)">Modifier le commentaire</span>&ensp;
+                            <span class="plink" @click="deleteComment(comment.id)">Supprimer le commentaire</span>
                         </p>
                     </small>
                     <!-- Formulaire de modification de commentaire -->
@@ -62,8 +65,8 @@
                                 </div>
                                 <button type="submit">Modifier le commentaire</button>
                             </form>
-                            <p class="text-center">{{ response }}</p>
                         </div>
+                        <p class="text-center">{{ response }}</p>
                     </div>
                 </div>
             </div>
@@ -113,6 +116,24 @@ export default {
             })
         .then(response => this.comments = response)
         .catch(error => this.comments = error);
+      },
+      deleteComment(commentId){
+          axios.delete('http://localhost:3000/api/comments/'+ commentId,{
+            headers: {
+                'Authorization': 'Bearer ' + this.token
+                }
+            })
+        .then(response => alert(response.data.message))
+        .catch(error => this.response = error);
+      },
+      deleteMessage(messageId){
+          axios.delete('http://localhost:3000/api/messages/'+ messageId,{
+            headers: {
+                'Authorization': 'Bearer ' + this.token
+                }
+            })
+        .then(response => alert(response.data.message))
+        .catch(error => this.response = error);
       },
       editMessage(messageId, content){
         this.showEditMessage = messageId;
