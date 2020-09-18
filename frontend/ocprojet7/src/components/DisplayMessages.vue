@@ -25,8 +25,19 @@
             </form>
             <p class="text-center">{{ response }}</p>
         </div>
-        
+
         <div v-if="showComments===item.id">
+            <!-- Formulaire d'ajout de commentaire -->
+            <div class="comments my-3 p-3 bg-light rounded box-shadow">
+                <form id="formNewComment" class="formNewComment" @submit.prevent="sentNewComment(item.id)">
+                    <div class="form-group">
+                        <textarea class="form-control" id="createcomment" rows="4" v-model="newComment" required></textarea>
+                    </div>
+                    <button type="submit">Ecrire un nouveau commentaire</button>
+                </form>
+                <p class="text-center">{{ messageComment }}</p>
+            </div>
+            <!-- Liste des commentaires -->
             <div class="comments" v-if="comments.data.length > 0">
                 <div class="my-3 p-3 bg-light rounded box-shadow" v-for="comment in comments.data" :key="comment">
                     <div class="media text-black text-left pt-3 mb-3">
@@ -36,19 +47,25 @@
                             {{ comment.content }}
                         </p>
                     </div>
+                    <!-- Lien pour modifier un commentaire -->
+                    <small class="text-right text-info">
+                        <p>
+                            <span class="plink" @click="editComment(comment.id, comment.content)">Modifier le commentaire</span>&ensp;
+                        </p>
+                    </small>
+                    <!-- Formulaire de modification de commentaire -->
+                    <div v-if="showEditComment===comment.id">
+                        <div class="comments my-3 p-3 bg-light rounded box-shadow">
+                            <form id="formNewComment" class="formNewComment" @submit.prevent="sentEditComment(comment.id)">
+                                <div class="form-group">
+                                    <textarea class="form-control" id="createcomment" rows="4" v-model="updateComment" required></textarea>
+                                </div>
+                                <button type="submit">Modifier le commentaire</button>
+                            </form>
+                            <p class="text-center">{{ response }}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="my-3 p-3 bg-light rounded box-shadow">
-                        <form id="formNewComment" class="formNewComment" @submit.prevent="sentNewComment(item.id)">
-                            <div class="form-group">
-                                <textarea class="form-control" id="createcomment" rows="4" v-model="newComment" required></textarea>
-                            </div>
-                            <button type="submit">Ecrire un nouveau commentaire</button>
-                        </form>
-                        <p class="text-center">{{ messageComment }}</p>
-                </div>
-            </div>
-            <div v-else class="comments">
-                <p class="small text-white">Pas de commentaire pour ce message</p>
             </div>
         </div>
     </div>
@@ -67,8 +84,10 @@ export default {
             return {
                     info: '',
                     showComments: '',
+                    showEditComment: '',
                     showEditMessage: '',
                     content: '',
+                    updateComment: '',
                     response: '',
                     comments: '',
                     newComment: '',
@@ -99,9 +118,24 @@ export default {
         this.showEditMessage = messageId;
         this.content = content;
       },
+      editComment(commentId, content){
+        this.showEditComment = commentId;
+        this.updateComment = content;
+      },
       sentEditMessage(messageId){
         axios.put('http://localhost:3000/api/messages/' + messageId, {
             content: this.content
+        }, {
+        headers: {
+            'Authorization': 'Bearer ' + this.token
+            }
+        })
+        .then(response => this.response = response.data.message)
+        .catch(error => this.response = error);
+      },
+      sentEditComment(commentId){
+        axios.put('http://localhost:3000/api/comments/' + commentId, {
+            content: this.updateComment
         }, {
         headers: {
             'Authorization': 'Bearer ' + this.token
@@ -119,7 +153,12 @@ export default {
                 'Authorization': 'Bearer ' + this.token
                 }
             })
-        .then(response => this.messageComment = response)
+        .then(response => {
+            this.messageComment = response.data.message;
+            this.newComment= '';
+            // this.$forceUpdate();
+            // window.location.reload();
+            })
         .catch(error => this.messageComment = error);
       }
   },
