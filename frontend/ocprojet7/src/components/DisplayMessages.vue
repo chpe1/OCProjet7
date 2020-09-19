@@ -21,6 +21,7 @@
         <!-- Liens pour modifier / supprimer les messages et voir les commentaires -->
         <small class="text-right text-info">
             <p>
+                <!-- <span :class="colorLike(message.id)"class="plink" @click="addLike(message.id)">J'aime</span>&ensp; -->
                 <span class="plink" @click="editMessage(message.id, message.content)">Modifier le message</span>&ensp;
                 <span class="plink" @click="deleteMessage(message.id)">Supprimer le message</span>&ensp;
                 <span v-if="showComments != message.id" class="plink" @click="getComments(message.id)">Voir les commentaires</span>
@@ -103,7 +104,8 @@ export default {
                     comments: '',
                     newComment: '',
                     messageComment: '',
-                    messageInfo: ''
+                    messageInfo: '',
+                    // like: 1
             }
         },
   computed: {
@@ -113,6 +115,34 @@ export default {
     })
   },
   methods: {
+    //   colorLike(messageId){
+    //       if ((this.showEditMessage === messageId) && (this.like===1)){
+    //           return {
+    //               'text-danger': true
+    //           }              
+    //       }
+    //   },
+    //   addLike(messageId){
+    //     axios.post('http://localhost:3000/api/messages/like/' + messageId,{
+    //     'like': this.like
+    //     },{
+    //     headers: {
+    //         'Authorization': 'Bearer ' + this.token
+    //     }
+    //     })
+    //     .then(() => {
+    //         this.messageInfo = 'Merci !';
+    //         if (this.like === 0){
+    //             this.like = 1;
+    //         }
+    //         else{
+    //             this.like = 0;
+    //         }
+    //         this.colorLike();
+    //         this.getMessages();
+    //         })
+    //     .catch(error => this.messageInfo= error);
+    //   },
       sentMessage() {
         axios.post('http://localhost:3000/api/messages',{
         'content': this.content,
@@ -232,7 +262,9 @@ export default {
             'Authorization': 'Bearer ' + this.token
             }
         })
-        .then(response => this.info = response)
+        .then(response => {
+            this.info = response;
+            })
         .catch(error => this.info = error);
       }
   },
@@ -244,6 +276,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+
 .message {
     margin: auto;
     color: white;

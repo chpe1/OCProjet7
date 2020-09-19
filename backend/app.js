@@ -11,6 +11,7 @@ const userRoutes = require('./routes/user');
 const messageRoutes = require('./routes/message');
 const commentsRoutes = require('./routes/commentaires');
 const adminRoutes = require('./routes/admin');
+const likeRoutes = require('./routes/like');
 
 // Crée les tables si elles n'existent pas déjà selon les formats contenus dans models
 sequelize.sync();
@@ -31,6 +32,7 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/api/comments', commentsRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/like', likeRoutes);
 
 
 

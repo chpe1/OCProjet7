@@ -99,11 +99,7 @@ exports.addLike = (req, res, next) => {
             .then(() => res.status(201).json({ message: 'UserId a été retiré de la liste des users qui aime ce message'}))
             .catch(error => res.status(404).json({ error }));
         })
-        // res.status(200).json({message: 'Un utilisateur de moins aime ce message !'}))
-        .catch(error => res.status(400).json({ error }));
-
-        // On supprime la ligne correspondante
-        
+        .catch(error => res.status(400).json({ error }));        
     }
     else{
         throw new Error ('Le like doit être de 1 ou 0');

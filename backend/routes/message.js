@@ -21,4 +21,5 @@ router.get('/:id', auth, messageCtrl.getOneMessage);
 router.post('/like/:messageId', auth, messageCtrl.addLike);
 
 
+
 module.exports = router;
