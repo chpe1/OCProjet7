@@ -19,15 +19,23 @@
             {{ message.content }} </p>
         </div>
         <!-- Liens pour modifier / supprimer les messages et voir les commentaires -->
-        <small class="text-right text-info">
-            <p>
+        <div class=" d-flex justify-content-end">
+        <small class="d-inline-flex text-info">
+            
                 <!-- <span :class="colorLike(message.id)"class="plink" @click="addLike(message.id)">J'aime</span>&ensp; -->
-                <span class="plink" @click="editMessage(message.id, message.content)">Modifier le message</span>&ensp;
-                <span class="plink" @click="deleteMessage(message.id)">Supprimer le message</span>&ensp;
-                <span v-if="showComments != message.id" class="plink" @click="getComments(message.id)">Voir les commentaires</span>
-                <span v-else class="plink" @click="hideComments">Cacher les commentaires</span> 
+
+            <p class="plink mr-2 text-danger" @click="addLike(message.id, 0)" v-if="likes.find(messageLiked => messageLiked === message.id)">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-heart-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/></svg>
             </p>
+            <p class="plink mr-2" @click="addLike(message.id, 1)" v-else>
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-heart" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 2.748l-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/></svg>
+            </p>
+            <p class="plink mr-2" @click="editMessage(message.id, message.content)">Modifier le message</p>
+            <p class="plink mr-2" @click="deleteMessage(message.id)">Supprimer le message</p>
+            <p v-if="showComments != message.id" class="plink mr-2" @click="getComments(message.id)">Voir les commentaires</p>
+            <p v-else class="plink mr-2" @click="hideComments">Cacher les commentaires</p> 
         </small>
+        </div>
         <!-- Formulaire d'édition d'un message -->
         <div v-if="showEditMessage===message.id">
             <form id="formEditMessage" class="formMessage" @submit.prevent="sentEditMessage(message.id)">
@@ -105,7 +113,7 @@ export default {
                     newComment: '',
                     messageComment: '',
                     messageInfo: '',
-                    // like: 1
+                    likes: [] // likes est un tableau contenant les messages aimés par l'utilisateur connecté
             }
         },
   computed: {
@@ -115,34 +123,20 @@ export default {
     })
   },
   methods: {
-    //   colorLike(messageId){
-    //       if ((this.showEditMessage === messageId) && (this.like===1)){
-    //           return {
-    //               'text-danger': true
-    //           }              
-    //       }
-    //   },
-    //   addLike(messageId){
-    //     axios.post('http://localhost:3000/api/messages/like/' + messageId,{
-    //     'like': this.like
-    //     },{
-    //     headers: {
-    //         'Authorization': 'Bearer ' + this.token
-    //     }
-    //     })
-    //     .then(() => {
-    //         this.messageInfo = 'Merci !';
-    //         if (this.like === 0){
-    //             this.like = 1;
-    //         }
-    //         else{
-    //             this.like = 0;
-    //         }
-    //         this.colorLike();
-    //         this.getMessages();
-    //         })
-    //     .catch(error => this.messageInfo= error);
-    //   },
+      addLike(messageId, data){
+        axios.post('http://localhost:3000/api/messages/like/' + messageId,{
+        'like': data,
+        'userId': this.userId
+        },{
+        headers: {
+            'Authorization': 'Bearer ' + this.token
+        }
+        })
+        .then(() => {
+            this.getLikes();
+            })
+        .catch(error => this.messageInfo= error);
+      },
       sentMessage() {
         axios.post('http://localhost:3000/api/messages',{
         'content': this.content,
@@ -263,11 +257,21 @@ export default {
             }
         })
         .then(response => {
+            this.getLikes();
             this.info = response;
             })
         .catch(error => this.info = error);
-      }
-  },
+      },
+      getLikes(){
+          axios.get('http://localhost:3000/api/like/' + this.userId, {
+          headers: {
+            'Authorization': 'Bearer ' + this.token
+            }
+          })
+          .then(response => this.likes = response.data)
+          .catch(error => this.likes = error);
+          },
+    },
   mounted() {
       this.getMessages()
   }
@@ -277,6 +281,10 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 
+.smallLink{
+    border: 1px solid green;
+    
+}
 .message {
     margin: auto;
     color: white;

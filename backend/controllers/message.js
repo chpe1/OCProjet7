@@ -93,7 +93,8 @@ exports.addLike = (req, res, next) => {
         .then(() => {
             Like.destroy({
                 where: {
-                    [Sequelize.and]: [{ userId: req.body.userId },{ messageId: req.params.messageId }]               
+                    userId: req.body.userId,
+                    messageId: req.params.messageId              
                 }    
             })
             .then(() => res.status(201).json({ message: 'UserId a été retiré de la liste des users qui aime ce message'}))
