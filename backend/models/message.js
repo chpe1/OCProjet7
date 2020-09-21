@@ -16,7 +16,8 @@ const Message = sequelize.define('message', {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    like: Sequelize.TINYINT.UNSIGNED
+    like: Sequelize.TINYINT.UNSIGNED,
+    image:  Sequelize.STRING
 });
 
 Message.hasMany(Commentaire, {as: 'reactors'});

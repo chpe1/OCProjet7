@@ -1,10 +1,18 @@
 <template>
 <div>
     <div class="message">
-        <form id="formMessage" class="formMessage" @submit.prevent="sentMessage">
+        <form id="formMessage" class="formMessage" @submit.prevent="sentMessage" enctype="multipart/form-data">
             <h3 class="text-center">Ajouter un message :</h3>
             <div class="form-group">
                 <textarea class="form-control" id="message" aria-describedby="messageHelp" rows="4" placeholder="Entrez votre message" v-model="content" required></textarea>
+            </div>
+            <div class="form-group">
+              <input type="file" class="form-control-file inputFile" name="image" id="image" @change="onFileChange">
+              <label for="image">Choisissez une image</label>
+              <small>Taille de l'image : 1 Mo maxi - Format : jpg, jpeg ou png</small>
+            </div>
+            <div class="preview">
+                <img v-if="url" :src="url" />
             </div>
             <button type="submit">Envoyer votre message</button>
         </form>
@@ -16,21 +24,18 @@
             <img :src="message.user.avatar" alt="avatar" class="mr-2 rounded avatar">
             <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
             <strong class="d-block text-gray-dark">{{ message.user.email }}</strong>
-            {{ message.content }} </p>
+            {{ message.content }} <br/> <img v-if="message.image" class="w-25" :src="message.image" alt="Image du message"/></p>
         </div>
         <!-- Liens pour modifier / supprimer les messages et voir les commentaires -->
         <div class=" d-flex justify-content-end">
         <small class="d-inline-flex text-info">
-            
-                <!-- <span :class="colorLike(message.id)"class="plink" @click="addLike(message.id)">J'aime</span>&ensp; -->
-
             <p class="plink mr-2 text-danger" @click="addLike(message.id, 0)" v-if="likes.find(messageLiked => messageLiked === message.id)">
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-heart-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/></svg>
             </p>
             <p class="plink mr-2" @click="addLike(message.id, 1)" v-else>
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-heart" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 2.748l-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/></svg>
             </p>
-            <p class="plink mr-2" @click="editMessage(message.id, message.content)">Modifier le message</p>
+            <p class="plink mr-2" @click="editMessage(message.id, message.content, message.image)">Modifier le message</p>
             <p class="plink mr-2" @click="deleteMessage(message.id)">Supprimer le message</p>
             <p v-if="showComments != message.id" class="plink mr-2" @click="getComments(message.id)">Voir les commentaires</p>
             <p v-else class="plink mr-2" @click="hideComments">Cacher les commentaires</p> 
@@ -38,10 +43,18 @@
         </div>
         <!-- Formulaire d'édition d'un message -->
         <div v-if="showEditMessage===message.id">
-            <form id="formEditMessage" class="formMessage" @submit.prevent="sentEditMessage(message.id)">
+            <form id="formEditMessage" class="formMessage" @submit.prevent="sentEditMessage(message.id)" enctype="multipart/form-data">
                 <h3 class="text-center">Modifier le message :</h3>
                 <div class="form-group">
                     <textarea class="form-control" id="editMessage" aria-describedby="messageHelp" rows="4" v-model="editContent" required></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="file" class="form-control-file inputFile" name="editImage" id="editImage" @change="editOnFileChange">
+                    <label for="editImage">Choisissez une image</label>
+                    <small>Taille de l'image : 1 Mo maxi - Format : jpg, jpeg ou png</small>
+                </div>
+                <div class="preview">
+                    <img v-if="editUrl" :src="editUrl" />
                 </div>
                 <button type="submit">Modifier votre message</button>
             </form>
@@ -113,7 +126,9 @@ export default {
                     newComment: '',
                     messageComment: '',
                     messageInfo: '',
-                    likes: [] // likes est un tableau contenant les messages aimés par l'utilisateur connecté
+                    likes: [], // likes est un tableau contenant les messages aimés par l'utilisateur connecté
+                    url: null, 
+                    editUrl: null
             }
         },
   computed: {
@@ -123,6 +138,14 @@ export default {
     })
   },
   methods: {
+      onFileChange(e) {
+        const file = e.target.files[0];
+        this.url = URL.createObjectURL(file);
+        },
+      editOnFileChange(e) {
+        const file = e.target.files[0];
+        this.editUrl = URL.createObjectURL(file);
+        },
       addLike(messageId, data){
         axios.post('http://localhost:3000/api/messages/like/' + messageId,{
         'like': data,
@@ -138,10 +161,20 @@ export default {
         .catch(error => this.messageInfo= error);
       },
       sentMessage() {
-        axios.post('http://localhost:3000/api/messages',{
-        'content': this.content,
-        'userId' : this.userId
-        },{
+        let formData = new FormData();
+        // Si un fichier a été téléchargé
+        let file = document.getElementById('image').files[0];
+
+        if (file){
+        formData.append('image', file);
+        }
+        // Si aucun fichier n'a été téléchargé.
+        else{
+            formData.append('image', "");
+        }
+        formData.append('content', this.content);
+        formData.append('userId', this.userId);
+        axios.post('http://localhost:3000/api/messages', formData, {
         headers: {
             'Authorization': 'Bearer ' + this.token
         }
@@ -195,9 +228,10 @@ export default {
             })
         .catch(error => this.messageInfo = error);
       },
-      editMessage(messageId, content){
+      editMessage(messageId, editContent, image){
         this.showEditMessage = messageId;
-        this.editContent = content;
+        this.editContent = editContent;
+        this.editUrl = image;
         this.showComments='';
       },
       editComment(commentId, content){
@@ -206,9 +240,18 @@ export default {
         this.messageComment = '';
       },
       sentEditMessage(messageId){
-        axios.put('http://localhost:3000/api/messages/' + messageId, {
-            content: this.editContent
-        }, {
+        let formData = new FormData();
+        // Si un fichier a été téléchargé
+        let file = document.getElementById('editImage').files[0];
+        if (file){
+        formData.append('image', file);
+        }
+        // Si aucun fichier n'a été téléchargé.
+        else{
+            formData.append('image', this.editUrl);
+        }
+        formData.append('content', this.editContent);
+        axios.put('http://localhost:3000/api/messages/' + messageId, formData, {
         headers: {
             'Authorization': 'Bearer ' + this.token
             }
@@ -216,6 +259,7 @@ export default {
         .then(response => {
             this.messageInfo = response.data.message;
             this.showEditMessage = '';
+            this.editUrl = '';
             this.getMessages();
         })
         .catch(error => this.messageInfo = error);
@@ -258,6 +302,7 @@ export default {
         })
         .then(response => {
             this.getLikes();
+            this.url='';
             this.info = response;
             })
         .catch(error => this.info = error);
@@ -281,10 +326,41 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 
-.smallLink{
-    border: 1px solid green;
-    
+.preview img {
+  max-width: 700px;
+  max-height: 500px;
 }
+
+.inputFile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+ 
+.inputFile + label {
+    border: 0;
+    background: none;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    border: 2px solid #3498db;
+    padding: 14px 40px;
+    outline: none;
+    color: white;
+    border-radius: 24px;
+    transition: 0.25s;
+    cursor: pointer;
+    max-width: 700px;
+}
+ 
+.inputFile:focus + label,
+.inputFile + label:hover {
+    background: #2ecc71
+}
+
 .message {
     margin: auto;
     color: white;

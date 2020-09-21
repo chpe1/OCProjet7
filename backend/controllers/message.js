@@ -1,36 +1,71 @@
 const Message = require('../models/message');
 const Like = require('../models/like');
 const User = require('../models/user');
+const fs = require('fs');
 const { Sequelize } = require('sequelize');
 
 exports.createMessage = (req, res, next) => {
+    let imageFile;
+    if (req.file)
+    {
+        imageFile = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+    }
+    else{
+        imageFile = '';
+    }
     Message.create({
         content: req.body.content,
         userId: req.body.userId,
-        like: 0
+        like: 0,
+        image: imageFile
     })
     .then((message) => res.status(201).json({ message }))
     .catch(error => res.status(400).json({ error }));
 };
 
 exports.modifyMessage = (req, res, next) => {
-    Message.update(req.body, {
+    let imageFile;
+    if (req.file)
+    {
+        imageFile = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+    }
+    else{
+        imageFile= req.body.image;
+    }
+    console.log(req.body.content);
+    Message.update({
+        content: req.body.content,
+        image: imageFile
+    }, {
         where: {
             id: req.params.id
         }
     })  
-    .then( () => res.status(200).json({ message : 'Message modifié avec succès !'}))
+    .then(() => res.status(200).json({ message : 'Message modifié avec succès !'}))
     .catch(error => res.status(400).json({ error }));
 };
 
 exports.deleteMessage = (req, res, next) => {
-    Message.destroy({
+    Message.findOne({
         where: {
             id: req.params.id
         }
     })
-    .then(() => res.status(200).json({ message: 'Message supprimé avec succès !' }))
-    .catch(error => res.status(400).json({ error }));
+    .then(message => {
+        if (message.image != ''){
+            const filename = message.image.split('/images/')[1];
+            fs.unlink(`images/${filename}`, (err) => {
+                console.log(err);
+            })  
+        }        
+        Message.destroy({
+            where: {
+                id: req.params.id
+            }
+        })
+        .then(() => res.status(200).json({ message: 'Message supprimé avec succès !' }))
+        .catch(error => res.status(400).json({ error }));
+    })
 };
 
 exports.getOneMessage = (req, res, next) => {
@@ -45,7 +80,7 @@ exports.getOneMessage = (req, res, next) => {
 
 exports.getAllMessages = (req, res, next) => {
     Message.findAll({
-        attributes: ['id', 'content', 'userId', 'like', 'createdAt', 'updatedAt'],
+        // attributes: ['id', 'content', 'userId', 'like', 'createdAt', 'updatedAt'],
         order: [
             ['createdAt', 'DESC']
         ],
