@@ -1,5 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('./../database');
+const User = require('./user');
+const Message = require('./message');
 
 const Like = sequelize.define('like', {
     id: { 
@@ -26,3 +28,6 @@ const Like = sequelize.define('like', {
 });
 
 module.exports = Like;
+
+User.belongsToMany(Message, { through: Like }); 
+Message.belongsToMany(User, { through: Like });  // Un message peut appartenir à plusieurs utilisateurs à travers un like

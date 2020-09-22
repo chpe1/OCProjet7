@@ -14,7 +14,11 @@ const adminRoutes = require('./routes/admin');
 const likeRoutes = require('./routes/like');
 
 // Crée les tables si elles n'existent pas déjà selon les formats contenus dans models
-sequelize.sync();
+sequelize.sync(
+  // {
+  //   force: true
+  // }
+  );
 
 app.use(bodyParser.json());
 

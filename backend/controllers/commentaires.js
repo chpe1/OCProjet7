@@ -1,8 +1,8 @@
-const Commentaire = require('../models/Commentaires');
+const Comment = require('../models/Comment');
 const User = require('../models/User');
 
 exports.createComment = (req, res, next) => {
-    Commentaire.create({
+    Comment.create({
         content: req.body.content,
         userId: req.body.userId,
         messageId: req.params.messageId
@@ -12,7 +12,7 @@ exports.createComment = (req, res, next) => {
 };
 
 exports.modifyComment = (req, res, next) => {
-    Commentaire.update(req.body, {
+    Comment.update(req.body, {
         where: {
             id: req.params.id
         }
@@ -22,7 +22,7 @@ exports.modifyComment = (req, res, next) => {
 };
 
 exports.deleteComment = (req, res, next) => {
-    Commentaire.destroy({
+    Comment.destroy({
         where: {
             id: req.params.id
         }
@@ -32,7 +32,7 @@ exports.deleteComment = (req, res, next) => {
 };
 
 exports.getAllComments = (req, res, next) => {
-    Commentaire.findAll({
+    Comment.findAll({
         where: {
             messageId: req.params.messageId
         },
@@ -44,6 +44,6 @@ exports.getAllComments = (req, res, next) => {
             attributes: ['email', 'id', 'avatar']
         }]
     })
-    .then(commentaires => res.status(200).json(commentaires))
+    .then(comments => res.status(200).json(comments))
     .catch(error => res.status(400).json({ error }));
 };

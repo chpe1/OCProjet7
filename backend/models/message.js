@@ -1,8 +1,6 @@
 const Sequelize = require('sequelize');
 const sequelize = require('./../database');
-const Commentaire = require('./commentaires');
 const User = require('./user');
-const Like = require('./like');
 
 const Message = sequelize.define('message', {
     id: { 
@@ -20,8 +18,12 @@ const Message = sequelize.define('message', {
     image:  Sequelize.STRING
 });
 
-Message.hasMany(Commentaire, {as: 'reactors'});
-Message.hasMany(Like, {as: 'likers'});
-Message.belongsTo(User, {foreignKey: 'userId'});  // On delete cascade à rajouter à chaque endroit où il y a une clé étrangère
+Message.belongsTo(User, {
+    constraints: true,
+    onDelete: 'CASCADE'
+});
+
+User.hasMany(Message);
+
 
 module.exports = Message;

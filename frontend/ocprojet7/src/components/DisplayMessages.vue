@@ -164,13 +164,14 @@ export default {
         let formData = new FormData();
         // Si un fichier a été téléchargé
         let file = document.getElementById('image').files[0];
+        console.log(document.getElementById('image').files);
 
         if (file){
         formData.append('image', file);
         }
         // Si aucun fichier n'a été téléchargé.
         else{
-            formData.append('image', "");
+            formData.append('image', '');
         }
         formData.append('content', this.content);
         formData.append('userId', this.userId);
@@ -181,8 +182,9 @@ export default {
         })
         .then(() => {
             this.messageInfo = 'Message bien envoyé !';
-            this.getMessages();
             this.content='';
+            this.url='';
+            this.getMessages();
             })
         .catch(error => this.messageInfo= error);
       },

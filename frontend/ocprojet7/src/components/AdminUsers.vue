@@ -17,7 +17,7 @@
                 <tr v-for="user in users" :key="user">
                     <th scope="row">{{ user.id }}</th>
                     <td class="plink" @click="getOneUser(user.id)">{{ user.email }}</td>
-                    <td>{{ user.avatar.split('/images/')[1] }}</td>
+                    <td class="avatar"><img :src="user.avatar" alt="avatar"/></td>
                     <td>{{ user.isAdmin }}</td>
                     <td>{{ user.createdAt }}</td>
                     <td>{{ user.updatedAt }}</td>

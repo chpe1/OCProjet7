@@ -3,7 +3,7 @@ const sequelize = require('../database');
 const User = require('./user');
 const Message = require('./message');
 
-const Commentaire = sequelize.define('commentaire', {
+const Comment = sequelize.define('comment', {
     id: { 
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -21,8 +21,18 @@ const Commentaire = sequelize.define('commentaire', {
     }
 });
 
-Commentaire.belongsTo(User, {foreignKey: 'userId'});
-// Commentaire.belongsTo(Message, {foreignKey: 'messageId'});
+Comment.belongsTo(User, {
+    constraints: true,
+    onDelete: 'CASCADE'
+});
 
+User.hasMany(Comment);
 
-module.exports = Commentaire;
+Comment.belongsTo(Message, {
+    constraints: true,
+    onDelete: 'CASCADE'
+});
+
+Message.hasMany(Comment);
+
+module.exports = Comment;

@@ -12,7 +12,7 @@ router.post('/signup', multer, userCtrl.signup);
 // Un utilisateur peut modifier son profil
 router.put('/', auth, multer, userCtrl.modifyUser);
 // Un utilisateur peut supprimer son profil
-router.delete('/', auth, userCtrl.deleteUser);
+router.delete('/:userId', auth, userCtrl.deleteUser);
 // Tout le monde peut se loguer s'il est inscrit
 router.post('/login', userCtrl.login);
 

@@ -182,7 +182,7 @@ exports.modifyUser = (req, res, next) => {
 exports.deleteUser = (req, res, next) => {
     User.findOne({
         where: {
-            email: req.body.email
+            id: req.params.userId
         }
     })
     .then(user => {
@@ -194,7 +194,7 @@ exports.deleteUser = (req, res, next) => {
         }
         User.destroy({
             where: {
-                email: req.body.email
+                id: req.params.userId
             }
         })
         .then(() => res.status(200).json({ message: 'Utilisateur supprimé avec succès !' }))

@@ -34,10 +34,7 @@ export default {
   methods: {
     deleteUser(){
      console.log(this.email + ' ' + this.token + ' ' + typeof(this.userId))
-    axios.delete('http://localhost:3000/api/auth/', { 
-            email: this.email, 
-            userId: this.userId 
-            }, {
+    axios.delete('http://localhost:3000/api/auth/' + this.userId, {
               headers: { 
                 "Authorization": 'Bearer ' + this.token 
                 }

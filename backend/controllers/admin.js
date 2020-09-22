@@ -1,6 +1,6 @@
 const User = require("../models/user");
 const Message = require("../models/message");
-const Commentaire = require("../models/commentaires");
+const Comment = require("../models/comment");
 
 exports.getAllUsers = (req, res, next) => {
     console.log('flag')
@@ -26,7 +26,7 @@ exports.getOneUser = (req, res, next) => {
             limit: 5
         })
         .then(message => {
-            Commentaire.findAll({
+            Comment.findAll({
                 where: {
                     userId: user.id
                 },
