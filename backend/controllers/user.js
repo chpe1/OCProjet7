@@ -73,7 +73,7 @@ exports.login = (req, res, next) => {
 exports.modifyUser = (req, res, next) => { 
     User.findOne({
         where: {
-            email: req.body.email
+            id: req.params.id
         }
     })
     .then(user =>{
@@ -94,7 +94,7 @@ exports.modifyUser = (req, res, next) => {
                             }, 
                             {
                                 where: {
-                                    email: req.body.email
+                                    id: req.params.id
                                 }
                             })
                             .then(() => res.status(200).json({message : 'Profil modifié', avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`}))
@@ -108,7 +108,7 @@ exports.modifyUser = (req, res, next) => {
                             }, 
                             {
                                 where: {
-                                    email: req.body.email
+                                    id: req.params.id
                                 }
                             })
                             .then(() => res.status(200).json({message : 'Profil modifié', avatar: req.body.avatar}))
@@ -125,7 +125,7 @@ exports.modifyUser = (req, res, next) => {
                         }, 
                         {
                             where: {
-                                email: req.body.email
+                                id: req.params.id
                             }
                         })
                         .then(() => res.status(200).json({message : 'Profil modifié', avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`}))
@@ -138,7 +138,7 @@ exports.modifyUser = (req, res, next) => {
                         }, 
                         {
                             where: {
-                                email: req.body.email
+                                id: req.params.id
                             }
                         })
                         .then(() => res.status(200).json({message : 'Profil modifié', avatar: req.body.avatar}))
@@ -155,7 +155,7 @@ exports.modifyUser = (req, res, next) => {
                 }, 
                 {
                     where: {
-                        email: req.body.email
+                        id: req.params.id
                     }
                 })
                 .then(() => res.status(200).json({message : 'Profil modifié', avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`}))
@@ -168,7 +168,7 @@ exports.modifyUser = (req, res, next) => {
                 }, 
                 {
                     where: {
-                        email: req.body.email
+                        id: req.params.id
                     }
                 })
                 .then(() => res.status(200).json({message : 'Profil modifié', avatar: req.body.avatar}))
@@ -182,7 +182,7 @@ exports.modifyUser = (req, res, next) => {
 exports.deleteUser = (req, res, next) => {
     User.findOne({
         where: {
-            id: req.params.userId
+            id: req.params.id
         }
     })
     .then(user => {
@@ -194,7 +194,7 @@ exports.deleteUser = (req, res, next) => {
         }
         User.destroy({
             where: {
-                id: req.params.userId
+                id: req.params.id
             }
         })
         .then(() => res.status(200).json({ message: 'Utilisateur supprimé avec succès !' }))

@@ -56,7 +56,7 @@ export default {
           this.$store.commit('SETAVATAR', response.data.avatar);
           return this.$router.push('/messages');
         })
-        .catch(error => this.info = error);
+        .catch(error => this.info = error.message);
         }
   }
 }

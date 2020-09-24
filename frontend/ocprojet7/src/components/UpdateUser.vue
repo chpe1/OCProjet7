@@ -52,12 +52,15 @@ export default {
         ...mapState({
           email: 'email',
           avatar: 'avatar',
-          token: 'token'
+          token: 'token',
+          userId: 'userId'
       })
     },
   methods: {
     updateUser(){
       let formData = new FormData();
+      formData.append('email', this.email);
+      formData.append('password', this.password);
       // Si un fichier a été téléchargé
       let file = document.getElementById('newAvatar').files[0];
       if (file){
@@ -70,15 +73,13 @@ export default {
       else{
         formData.append('avatar', "");
       }
-      formData.append('email', this.email);
-      formData.append('password', this.password);
-      axios.put('http://localhost:3000/api/auth/', formData, {
+      
+      axios.put('http://localhost:3000/api/auth/' + this.userId, formData, {
         headers: {
             'Authorization': 'Bearer ' + this.token
           }
         })
       .then((response) => {
-        
         if (localStorage.avatar){ // On modifie l'avatar dans le localstorage s'il existe
             localStorage.avatar = response.data.avatar;
             }

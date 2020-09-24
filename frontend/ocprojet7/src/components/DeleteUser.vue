@@ -4,7 +4,6 @@
       <div class="col-12">
         <form id="formDeleteUser" class="formDeleteUser" @submit.prevent="deleteUser">
             <button type="submit">Supprimer votre profil</button>
-            <p class="text-center">Attention : Vous ne pouvez supprimer votre compte que si vous n'avez envoyé aucun message. Si vous avez posté des messages, merci de les supprimer auparavant</p>
         </form>
         <p class="text-center">{{ info }}</p>
       </div>
@@ -40,7 +39,7 @@ export default {
                 }
             })
       .then((response) => {this.info = response})
-      .catch(error => this.info = error);
+      .catch(error => this.info = error.message);
     }
   }
 }

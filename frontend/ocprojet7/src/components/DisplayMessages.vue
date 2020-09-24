@@ -35,9 +35,9 @@
             <p class="plink mr-2" @click="addLike(message.id, 1)" v-else>
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-heart" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 2.748l-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/></svg>
             </p>
-            <p class="plink mr-2" @click="editMessage(message.id, message.content, message.image)">Modifier le message</p>
-            <p class="plink mr-2" @click="deleteMessage(message.id)">Supprimer le message</p>
-            <p v-if="showComments != message.id" class="plink mr-2" @click="getComments(message.id)">Voir les commentaires</p>
+                <p v-if="userId === message.userId" class="plink mr-2" @click="editMessage(message.id, message.content, message.image)">Modifier le message</p>
+                <p v-if="userId === message.userId" class="plink mr-2" @click="deleteMessage(message.id)">Supprimer le message</p>
+                <p v-if="showComments != message.id" class="plink mr-2" @click="getComments(message.id)">Voir les commentaires</p>
             <p v-else class="plink mr-2" @click="hideComments">Cacher les commentaires</p> 
         </small>
         </div>
@@ -81,7 +81,7 @@
                     </div>
                     <!-- Lien pour modifier / supprimer un commentaire -->
                     <small class="text-right text-info">
-                        <p>
+                        <p v-if="userId == comment.userId">
                             <span class="plink" @click="editComment(comment.id, comment.content)">Modifier le commentaire</span>&ensp;
                             <span class="plink" @click="deleteComment(comment.id, message.id)">Supprimer le commentaire</span>
                         </p>
@@ -216,7 +216,7 @@ export default {
             this.showComments = messageId;
             this.getComments(messageId);
             })
-        .catch(error => this.messageInfo = error);
+        .catch(error => this.messageInfo = error.message);
       },
       deleteMessage(messageId){
           axios.delete('http://localhost:3000/api/messages/'+ messageId,{
@@ -228,7 +228,7 @@ export default {
             this.messageInfo = response.data.message;
             this.getMessages();
             })
-        .catch(error => this.messageInfo = error);
+        .catch(error => this.messageInfo = error.message);
       },
       editMessage(messageId, editContent, image){
         this.showEditMessage = messageId;
@@ -255,7 +255,8 @@ export default {
         formData.append('content', this.editContent);
         axios.put('http://localhost:3000/api/messages/' + messageId, formData, {
         headers: {
-            'Authorization': 'Bearer ' + this.token
+            'Authorization': 'Bearer ' + this.token,
+            'Content-Type': 'multipart/form-data'
             }
         })
         .then(response => {
@@ -264,7 +265,7 @@ export default {
             this.editUrl = '';
             this.getMessages();
         })
-        .catch(error => this.messageInfo = error);
+        .catch(error => this.messageInfo = error.message);
       },
       sentEditComment(commentId, messageId){
         axios.put('http://localhost:3000/api/comments/' + commentId, {
@@ -278,7 +279,7 @@ export default {
             this.showEditComment = '';
             this.getComments(messageId);
             })
-        .catch(error => this.messageComment = error);
+        .catch(error => this.messageComment = error.message);
       },
       sentNewComment(messageId){
         axios.post('http://localhost:3000/api/comments/'+ messageId,{

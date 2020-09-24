@@ -2,7 +2,7 @@ const Message = require('../models/message');
 const Like = require('../models/like');
 const User = require('../models/user');
 const fs = require('fs');
-const { Sequelize } = require('sequelize');
+// const { Sequelize } = require('sequelize');
 
 exports.createMessage = (req, res, next) => {
     let imageFile;
@@ -24,6 +24,7 @@ exports.createMessage = (req, res, next) => {
 };
 
 exports.modifyMessage = (req, res, next) => {
+    console.log('flag');
     let imageFile;
     if (req.file)
     {
@@ -32,7 +33,6 @@ exports.modifyMessage = (req, res, next) => {
     else{
         imageFile= req.body.image;
     }
-    console.log(req.body.content);
     Message.update({
         content: req.body.content,
         image: imageFile

@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const auth = require('../middleware/auth');
+const authMessage = require('../middleware/authMessage');
 const multer = require('../middleware/multer-config');
 const messageCtrl = require('../controllers/message');
 
@@ -10,9 +11,9 @@ const messageCtrl = require('../controllers/message');
 // Un utilisateur peut créer un message
 router.post('/', auth, multer, messageCtrl.createMessage);
 // Un utilisateur peut modifier son message
-router.put('/:id', auth, multer, messageCtrl.modifyMessage);
+router.put('/:id', authMessage, multer, messageCtrl.modifyMessage);
 // Un utilisateur peut supprimer son message
-router.delete('/:id', auth, messageCtrl.deleteMessage);
+router.delete('/:id', authMessage, messageCtrl.deleteMessage);
 // Un utilisateur peut voir tous les messages
 router.get('/',auth, messageCtrl.getAllMessages);
 // Un utilisateur peut obtenir un message
