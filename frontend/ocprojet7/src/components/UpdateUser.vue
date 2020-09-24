@@ -59,7 +59,7 @@ export default {
   methods: {
     updateUser(){
       let formData = new FormData();
-      formData.append('email', this.email);
+      // formData.append('email', this.email);
       formData.append('password', this.password);
       // Si un fichier a été téléchargé
       let file = document.getElementById('newAvatar').files[0];

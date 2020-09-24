@@ -1,14 +1,15 @@
 import { createStore } from 'vuex'
+import createPersistedState from "vuex-persistedstate";
 
 export default createStore({
   state: {
     userId: '',
     isAdmin: '',
-    // token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTU5OTk4NzMzNywiZXhwIjoxNjAwMDczNzM3fQ.cI8tEe6sPvfCJa2QmriZYhKAvvIyDyYeZ3jwk59zy3k',
     token: '',
     email: '',
     avatar: ''
   },
+  plugins: [createPersistedState()],
   getters: {
     getIsAdmin: state => {
       return `${state.isAdmin}`
