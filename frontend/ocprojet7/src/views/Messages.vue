@@ -51,15 +51,6 @@ export default {
 .home img{
   width: 250px;
 }
-/* 
-.home{
-  border: 1px solid green;
-}
-
-.formMessage{
-  border: 1px solid yellow;
-}
-*/
 .userAccount a {
   color: white;
 }

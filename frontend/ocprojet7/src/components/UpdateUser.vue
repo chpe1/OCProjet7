@@ -17,7 +17,6 @@
             <legend>Modifier votre avatar :</legend>
             <div class="form-group">
               <input type="file" class="form-control-file" name="newAvatar" id="newAvatar" >
-              <small> 1 Mo maxi - Format : jpg, jpeg ou png</small>
             </div>
           </fieldset>
             <button type="submit">Modifier votre profil</button>
@@ -42,7 +41,6 @@ export default {
                     info: '',
                     password: '',
                     confirmPassword: '',
-                    maxFileSize: 1048576
                   }
       },
   components: {
@@ -64,9 +62,6 @@ export default {
       // Si un fichier a été téléchargé
       let file = document.getElementById('newAvatar').files[0];
       if (file){
-        // if (file.size <= this.maxFileSize){
-          
-        // }
         formData.append('image', file);
       }
       // Si aucun fichier n'a été téléchargé.

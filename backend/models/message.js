@@ -15,7 +15,7 @@ const Message = sequelize.define('message', {
         allowNull: false
     },
     like: Sequelize.TINYINT.UNSIGNED,
-    image:  Sequelize.STRING
+    image: Sequelize.STRING
 });
 
 Message.belongsTo(User, {

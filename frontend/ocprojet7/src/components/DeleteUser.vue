@@ -5,7 +5,6 @@
         <form id="formDeleteUser" class="formDeleteUser" @submit.prevent="deleteUser">
             <button type="submit">Supprimer votre profil</button>
         </form>
-        <p class="text-center">{{ info }}</p>
       </div>
     </div>
   </div>
@@ -32,13 +31,14 @@ export default {
     },
   methods: {
     deleteUser(){
-     console.log(this.email + ' ' + this.token + ' ' + typeof(this.userId))
     axios.delete('http://localhost:3000/api/auth/' + this.userId, {
-              headers: { 
-                "Authorization": 'Bearer ' + this.token 
-                }
-            })
-      .then((response) => {this.info = response})
+        headers: { 
+          "Authorization": 'Bearer ' + this.token 
+          }
+      })
+      .then(() => {
+        return this.$router.push('/');
+      })
       .catch(error => this.info = error.message);
     }
   }

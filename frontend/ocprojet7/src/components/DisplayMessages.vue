@@ -9,7 +9,6 @@
             <div class="form-group">
               <input type="file" class="form-control-file inputFile" name="image" id="image" @change="onFileChange">
               <label for="image">Choisissez une image</label>
-              <small>Taille de l'image : 1 Mo maxi - Format : jpg, jpeg ou png</small>
             </div>
             <div class="preview">
                 <img v-if="url" :src="url" />
@@ -51,7 +50,6 @@
                 <div class="form-group">
                     <input type="file" class="form-control-file inputFile" name="editImage" id="editImage" @change="editOnFileChange">
                     <label for="editImage">Choisissez une image</label>
-                    <small>Taille de l'image : 1 Mo maxi - Format : jpg, jpeg ou png</small>
                 </div>
                 <div class="preview">
                     <img v-if="editUrl" :src="editUrl" />
@@ -60,7 +58,7 @@
             </form>
         </div>
         <!-- Formulaire d'ajout de commentaire -->
-        <div v-if="showComments===message.id">
+        <div v-if="showComments===message.id">            
             <div class="comments my-3 p-3 bg-light rounded box-shadow">
                 <form id="formNewComment" class="formNewComment" @submit.prevent="sentNewComment(message.id)">
                     <div class="form-group">
@@ -70,7 +68,7 @@
                 </form>
             </div>
             <!-- Liste des commentaires -->
-            <div class="comments" v-if="comments.data.length > 0">
+            <div class="comments" v-if="comments.data.length > 0"> -->
                 <div class="my-3 p-3 bg-light rounded box-shadow" v-for="comment in comments.data" :key="comment">
                     <div class="media text-black text-left pt-3 mb-3">
                         <img :src="comment.user.avatar" alt="avatar" class="mr-2 rounded avatar">
@@ -110,6 +108,7 @@
 
 import axios from 'axios'
 import { mapState } from 'vuex'
+// import DisplayComments from '@/components/DisplayComments.vue'
 
 export default {
   name: 'DisplayMessages',
@@ -131,6 +130,9 @@ export default {
                     editUrl: null
             }
         },
+//   components: {
+//       DisplayComments
+//   },
   computed: {
     ...mapState({
     token: 'token',
@@ -198,6 +200,7 @@ export default {
         this.showComments = messageId;
         // Réinitialise showEditMessage pour que le formulaire de modification du message disparaisse si on clique sur voir les commentaires
         this.showEditMessage = '';
+
         axios.get('http://localhost:3000/api/comments/'+ messageId,{
             headers: {
                 'Authorization': 'Bearer ' + this.token

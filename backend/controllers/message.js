@@ -8,11 +8,14 @@ exports.createMessage = (req, res, next) => {
     let imageFile;
     if (req.file)
     {
+        console.log('flag');
+        console.log(req.file);
         imageFile = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
     }
     else{
         imageFile = '';
     }
+    console.log(imageFile);
     Message.create({
         content: req.body.content,
         userId: req.body.userId,
@@ -80,7 +83,7 @@ exports.getOneMessage = (req, res, next) => {
 
 exports.getAllMessages = (req, res, next) => {
     Message.findAll({
-        attributes: ['id', 'content', 'userId', 'like', [sequelize.fn('date_format', sequelize.col('message.createdAt'), '%d-%m-%Y à %H:%i:%s'), 'createdAt_formated'], [sequelize.fn('date_format', sequelize.col('message.updatedAt'), '%d-%m-%Y à %H:%i:%s'), 'updatedAt_formated']],
+        attributes: ['id', 'content', 'userId', 'like', 'image', [sequelize.fn('date_format', sequelize.col('message.createdAt'), '%d-%m-%Y à %H:%i:%s'), 'createdAt_formated'], [sequelize.fn('date_format', sequelize.col('message.updatedAt'), '%d-%m-%Y à %H:%i:%s'), 'updatedAt_formated']],
         order: [
             ['createdAt', 'DESC']
         ],
@@ -98,23 +101,24 @@ exports.addLike = (req, res, next) => {
     // la requête part avec req.body.like à 1 s'il n'aimait pas déjà, à 0 si c'est pour enlever son like
    
     if (req.body.like === 1){
-            Message.increment({
-                like: 1
-            },{
-                where: {
-                    id: req.params.messageId
-                }
-            })
-            .then(() => res.status(200).json({ message: 'Un utilisateur de plus aime ce message !'}))
-            .catch(error => res.status(400).json({ error }));
-        
-        // ajouter une ligne à la table like avec le userId et le messageId
-        Like.create({
-            messageId: req.params.messageId,
-            userId: req.body.userId
+        Message.increment({
+            like: 1
+        },{
+            where: {
+                id: req.params.messageId
+            }
         })
-        .then(() => res.status(201).json({ message: 'UserId a été ajouté à la liste des users qui aime ce message' }))
-        .catch(error => res.status(400).json({ error }));
+        .then(() => 
+            {
+                // ajouter une ligne à la table like avec le userId et le messageId
+                Like.create({
+                    messageId: req.params.messageId,
+                    userId: req.body.userId
+                })
+                .then(() => res.status(201).json({ message: 'UserId a été ajouté à la liste des users qui aime ce message' }))
+                .catch(error => res.status(400).json({ error }));
+            })
+        .catch(error => res.status(400).json({ error }));  
     }
     else if (req.body.like === 0){
         // On enlève un like à la table message

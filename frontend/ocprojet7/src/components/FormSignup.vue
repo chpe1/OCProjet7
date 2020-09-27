@@ -14,7 +14,6 @@
             </div>
             <div class="form-group">
               <input type="file" class="form-control-file" name="avatar" id="avatar" >
-              <small> 1 Mo maxi - Format : jpg, jpeg ou png</small>
             </div>
             <button type="submit">Inscription</button>
         </form>
@@ -42,23 +41,29 @@ export default {
         let formData = new FormData();
         // Si un fichier a été téléchargé
         let file = document.getElementById('avatar').files[0];
-
         if (file){
         formData.append('image', file);
         }
         // Si aucun fichier n'a été téléchargé.
         else{
-            formData.append('avatar', "");
+            formData.append('image', "");
         }
         formData.append('email', this.email);
-        formData.append('password', this.password);
-        axios.post('http://localhost:3000/api/auth/signup', formData)
-        .then(response => {
-          this.info = response.data.message;
-          return this.$router.push('/');
-        })
-        .catch(error => this.info = error);
+        if (this.password === this.confirm){
+          console.log(this.password);
+          console.log(this.confirm);
+          formData.append('password', this.password);
+          axios.post('http://localhost:3000/api/auth/signup', formData)
+          .then(response => {
+            this.info = response.data.message;
+            return this.$router.push('/');
+          })
+          .catch(error => this.info = error);
         }
+        else{
+          this.info = 'Vos mots de passe sont différents'
+        }
+      }
   }
 }
 </script>
