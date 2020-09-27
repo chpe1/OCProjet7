@@ -2,7 +2,7 @@ const Message = require('../models/message');
 const Like = require('../models/like');
 const User = require('../models/user');
 const fs = require('fs');
-// const { Sequelize } = require('sequelize');
+const sequelize = require('./../database');
 
 exports.createMessage = (req, res, next) => {
     let imageFile;
@@ -80,7 +80,7 @@ exports.getOneMessage = (req, res, next) => {
 
 exports.getAllMessages = (req, res, next) => {
     Message.findAll({
-        // attributes: ['id', 'content', 'userId', 'like', 'createdAt', 'updatedAt'],
+        attributes: ['id', 'content', 'userId', 'like', [sequelize.fn('date_format', sequelize.col('message.createdAt'), '%d-%m-%Y à %H:%i:%s'), 'createdAt_formated'], [sequelize.fn('date_format', sequelize.col('message.updatedAt'), '%d-%m-%Y à %H:%i:%s'), 'updatedAt_formated']],
         order: [
             ['createdAt', 'DESC']
         ],

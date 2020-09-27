@@ -1,5 +1,6 @@
 const Comment = require('../models/Comment');
 const User = require('../models/User');
+const sequelize = require('./../database');
 
 exports.createComment = (req, res, next) => {
     Comment.create({
@@ -33,6 +34,7 @@ exports.deleteComment = (req, res, next) => {
 
 exports.getAllComments = (req, res, next) => {
     Comment.findAll({
+        attributes: ['id', 'content', 'userId', 'messageId', [sequelize.fn('date_format', sequelize.col('comment.createdAt'), '%d-%m-%Y à %H:%i:%s'), 'createdAt_formated'], [sequelize.fn('date_format', sequelize.col('comment.updatedAt'), '%d-%m-%Y à %H:%i:%s'), 'updatedAt_formated']],
         where: {
             messageId: req.params.messageId
         },

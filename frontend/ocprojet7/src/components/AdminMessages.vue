@@ -32,12 +32,11 @@
                     <td>{{ message.content }}</td>
                     <td>{{ message.user.email }}</td>
                     <td>{{ message.like }}</td>
-                    <td>{{ message.createdAt }}</td>
-                    <td>{{ message.updatedAt }}</td>
+                    <td>{{ message.createdAt_formated }}</td>
+                    <td>{{ message.updatedAt_formated }}</td>
                 </tr>
             </tbody>
         </table>
-
         <!-- TABLEAU DES COMMENTAIRES  -->
         <div v-if="comments.length>0">
             <table class="table table-light table-striped">
@@ -68,8 +67,8 @@
                         <th scope="row">{{ comment.id }}</th>
                         <td>{{ comment.content }}</td>
                         <td>{{ comment.user.email }}</td>
-                        <td>{{ comment.createdAt }}</td>
-                        <td>{{ comment.updatedAt }}</td>
+                        <td>{{ comment.createdAt_formated }}</td>
+                        <td>{{ comment.updatedAt_formated }}</td>
                     </tr>
                 </tbody>
             </table>

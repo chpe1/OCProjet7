@@ -1,5 +1,4 @@
 <template>
-  <div class="getusers">
     <div class="row">
       <div class="col-12">
         <table class="table table-light table-striped">
@@ -19,8 +18,8 @@
                     <td class="plink" @click="getOneUser(user.id)">{{ user.email }}</td>
                     <td class="avatar"><img :src="user.avatar" alt="avatar"/></td>
                     <td>{{ user.isAdmin }}</td>
-                    <td>{{ user.createdAt }}</td>
-                    <td>{{ user.updatedAt }}</td>
+                    <td>{{ user.createdAt_formated }}</td>
+                    <td>{{ user.updatedAt_formated }}</td>
                 </tr>
             </tbody>
         </table>
@@ -40,8 +39,8 @@
                     <th scope="row">{{ message.id }}</th>
                     <td>{{ message.content }}</td>
                     <td>{{ message.like }}</td>
-                    <td>{{ message.createdAt }}</td>
-                    <td>{{ message.updatedAt }}</td>
+                    <td>{{ message.createdAt_formated }}</td>
+                    <td>{{ message.updatedAt_formated }}</td>
                 </tr>
             </tbody>
         </table>
@@ -61,14 +60,13 @@
                     <th scope="row">{{ comment.id }}</th>
                     <td>{{ comment.content }}</td>
                     <td>{{ comment.messageId }}</td>
-                    <td>{{ comment.createdAt }}</td>
-                    <td>{{ comment.updatedAt }}</td>
+                    <td>{{ comment.createdAt_formated }}</td>
+                    <td>{{ comment.updatedAt_formated }}</td>
                 </tr>
             </tbody>
         </table>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -140,7 +138,7 @@ export default {
 }
 
 .getusers{
-    width: 100%;
+    border: 1px solid green;
 }
 
 caption { 
