@@ -16,7 +16,7 @@
           <fieldset>
             <legend>Modifier votre avatar :</legend>
             <div class="form-group">
-              <input type="file" class="form-control-file" name="newAvatar" id="newAvatar" >
+              <input type="file" class="form-control-file" ref="newAvatar" name="newAvatar" id="newAvatar" >
             </div>
           </fieldset>
             <button type="submit">Modifier votre profil</button>
@@ -60,7 +60,7 @@ export default {
       // formData.append('email', this.email);
       formData.append('password', this.password);
       // Si un fichier a été téléchargé
-      let file = document.getElementById('newAvatar').files[0];
+      let file = this.$refs.newAvatar.files[0];
       if (file){
         formData.append('image', file);
       }

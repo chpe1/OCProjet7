@@ -10,23 +10,6 @@ export default createStore({
     avatar: ''
   },
   plugins: [createPersistedState()],
-  getters: {
-    getIsAdmin: state => {
-      return `${state.isAdmin}`
-    },
-    getToken: state => {
-      return `${state.token}`
-    },
-    getEmail: state => {
-      return `${state.email}`
-    },
-    getUserId: state => {
-      return `${state.userId}`
-    },
-    getAvatar: state => {
-      return `${state.avatar}`
-    }
-  },
   mutations: {
     SETTOKEN(state, token){
       state.token = token

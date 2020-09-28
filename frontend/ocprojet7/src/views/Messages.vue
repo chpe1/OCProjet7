@@ -3,8 +3,7 @@
     <div class="col-12">
       <p class="text-center"><img alt="logo" class="logo" src="../assets/images/groupomania-mini.png"></p>
       <p class="text-center w-100">Bienvenue sur le réseau social de Groupomania</p>
-      <div v-if="$store.state.isAdmin === true">
-      <!-- <div v-if="getIsAdmin === true"> Ne fonctionne pas -->
+      <div v-if="isAdmin === true">
         <div id="nav">
           <router-link to="/admin">Panneau d'administration</router-link>
         </div>
@@ -29,7 +28,6 @@
 // @ is an alias to /src
 import DisplayMessages from '@/components/DisplayMessages.vue'
 import { mapState } from 'vuex'
-// import { mapGetters } from 'vuex'
 
 export default {
   name: 'Messages',
@@ -37,10 +35,10 @@ export default {
     DisplayMessages
   }, 
   computed: {
-        // ...mapGetters(['getIsAdmin'])
         ...mapState({
           email: 'email',
-          avatar: 'avatar'
+          avatar: 'avatar',
+          isAdmin: 'isAdmin'
       })
     },
   methods: {
@@ -62,7 +60,6 @@ export default {
 
 #nav{
   font-size: 1rem;
-  // border: 1px solid white;
   margin-bottom: 5px;
   margin-left: 0;
 }

@@ -7,7 +7,7 @@
                 <textarea class="form-control" id="message" aria-describedby="messageHelp" rows="4" placeholder="Entrez votre message" v-model="content" required></textarea>
             </div>
             <div class="form-group">
-              <input type="file" class="form-control-file inputFile" name="image" id="image" @change="onFileChange">
+              <input type="file" class="form-control-file inputFile" ref="image" name="image" id="image" @change="onFileChange">
               <label for="image">Choisissez une image</label>
             </div>
             <div class="preview">
@@ -165,7 +165,7 @@ export default {
       sentMessage() {
         let formData = new FormData();
         // Si un fichier a été téléchargé
-        let file = document.getElementById('image').files[0];
+        let file = this.$refs.image.files[0];
         if (file){
         formData.append('image', file);
         }
