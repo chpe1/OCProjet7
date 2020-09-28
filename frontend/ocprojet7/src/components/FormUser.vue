@@ -9,10 +9,6 @@
             <div class="form-group">
               <input type="password" class="form-control" id="password" placeholder="Mot de passe" v-model="password">
             </div>
-            <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe" v-model="rememberMe">
-              <label class="form-check-label" for="rememberMe">Se souvenir de moi</label>
-            </div>
             <button type="submit">Connexion</button>
         </form>
         <router-link to="/signup">Pas encore inscrit ?</router-link>
@@ -41,14 +37,6 @@ export default {
           'password': this.password
         })
         .then(response => {
-          if (this.rememberMe ===  true){
-            localStorage.clear();
-            localStorage.userId = response.data.userId;
-            localStorage.token = response.data.token;
-            localStorage.email = response.data.email;
-            localStorage.isAdmin = response.data.isAdmin;
-            localStorage.avatar = response.data.avatar;
-          }
           this.$store.commit('SETTOKEN', response.data.token);
           this.$store.commit('SETADMIN', response.data.isAdmin);
           this.$store.commit('SETUSERID', response.data.userId);
@@ -66,7 +54,6 @@ export default {
 <style scoped lang="scss">
 .login{
     margin: auto;
-    // border: 1px solid yellow;
 }
 .formUser {
     max-width: 500px;

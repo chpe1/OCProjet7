@@ -2,7 +2,7 @@
   <div class="user">
     <div class="row">
       <div class="col-12">
-        <p class="text-center"><img alt="logo" src="../assets/images/groupomania-mini.png"></p>
+        <p class="text-center"><img alt="logo" class="logo" src="../assets/images/groupomania-mini.png"></p>
         <p class="text-center">Bienvenue sur le profil de {{ email }}</p>
       </div>
     </div>
@@ -31,21 +31,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-.user img{
-  width: 250px;
-}
-/* 
-.home{
-  border: 1px solid green;
-}
-
-.formMessage{
-  border: 1px solid yellow;
-}
-*/
-.userAccount a {
-  color: white;
-}
-</style>

@@ -26,7 +26,7 @@
             {{ message.content }} <br/> <img v-if="message.image" class="w-25" :src="message.image" alt="Image du message"/></p>
         </div>
         <!-- Liens pour modifier / supprimer les messages et voir les commentaires -->
-        <div class=" d-flex justify-content-end">
+        <div class="d-flex justify-content-end">
         <small class="d-inline-flex text-info">
             <p class="plink mr-2 text-danger" @click="addLike(message.id, 0)" v-if="likes.find(messageLiked => messageLiked === message.id)">
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-heart-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/></svg>
@@ -68,7 +68,7 @@
                 </form>
             </div>
             <!-- Liste des commentaires -->
-            <div class="comments" v-if="comments.data.length > 0"> -->
+            <div class="comments" v-if="comments.data.length > 0">
                 <div class="my-3 p-3 bg-light rounded box-shadow" v-for="comment in comments.data" :key="comment">
                     <div class="media text-black text-left pt-3 mb-3">
                         <img :src="comment.user.avatar" alt="avatar" class="mr-2 rounded avatar">
@@ -333,8 +333,7 @@ export default {
 <style scoped lang="scss">
 
 .preview img {
-  max-width: 700px;
-  max-height: 500px;
+  max-width: 200px;
 }
 
 .inputFile {
@@ -368,22 +367,15 @@ export default {
 }
 
 .message {
-    margin: auto;
     color: white;
-    max-width: 800px;
+
 }
 
 .avatar{
     width: 30px;
 }
 
-.plink{
-    text-decoration: underline;
-    cursor: pointer;
-}
-
 .formMessage {
-    max-width: 800px;
     margin: auto;
     padding: 40px;
     position: relative;
@@ -420,7 +412,6 @@ export default {
     border: 2px solid #3498db;
     padding: 10px 10px;
     outline: none;
-    max-width: 700px;
     color: white;
     border-radius: 10px;
     transition: 0.25s
@@ -428,7 +419,6 @@ export default {
 
 .formMessage textarea:focus
 {
-    max-width: 750px;
     border-color: #2ecc71
 }
 

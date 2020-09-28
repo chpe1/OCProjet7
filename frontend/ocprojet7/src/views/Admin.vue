@@ -1,15 +1,15 @@
 <template>
   <div class="admin">
-    <p class="text-center"><img alt="logo" src="../assets/images/groupomania-mini.png"></p>
+    <p class="text-center"><img class="logo" alt="logo" src="../assets/images/groupomania-mini.png"></p>
     <p class="text-center">Panneau d'administration du site Groupomania</p>
     <div class="row">
       <div class="col-12">
-        <p class="plink text-center" ><span @click="chooseMenu('user')">Afficher tous les utilisateurs</span> | <span @click="chooseMenu('messages')">Afficher tous les messages</span></p>
+        <p class="text-center"><span class="plink" @click="chooseMenu('user')">Afficher tous les utilisateurs</span> | <span class="plink" @click="chooseMenu('messages')">Afficher tous les messages</span></p>
       </div>
-      <div v-if="choice === 'user'">
+      <div  class="col-12" v-if="choice === 'user'">
         <AdminUsers/>
       </div>
-      <div v-if="choice === 'messages'">
+      <div class="col-12" v-if="choice === 'messages'">
         <AdminMessages/>
       </div>
     </div>
@@ -44,10 +44,4 @@ export default {
 .admin img{
   width: 250px;
 }
-
-.plink span{
-    cursor: pointer;
-    text-decoration: underline;
-}
-
 </style>

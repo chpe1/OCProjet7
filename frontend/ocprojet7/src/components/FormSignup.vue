@@ -50,8 +50,6 @@ export default {
         }
         formData.append('email', this.email);
         if (this.password === this.confirm){
-          console.log(this.password);
-          console.log(this.confirm);
           formData.append('password', this.password);
           axios.post('http://localhost:3000/api/auth/signup', formData)
           .then(response => {

@@ -31,10 +31,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-.user img{
-  width: 250px;
-}
-
-</style>

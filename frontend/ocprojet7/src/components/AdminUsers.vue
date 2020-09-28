@@ -1,6 +1,6 @@
 <template>
-    <div class="row">
-      <div class="col-12">
+    <div class="col-12">
+      <div class="table-responsive-lg">
         <table class="table table-light table-striped">
             <thead class="thead-dark">
                 <tr>
@@ -125,20 +125,6 @@ export default {
 
 .avatar img{
     width: 100px;
-}
-
-.plink{
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.plink:hover{
-  color: #3498db;
-  text-decoration: underline;
-}
-
-.getusers{
-    border: 1px solid green;
 }
 
 caption { 

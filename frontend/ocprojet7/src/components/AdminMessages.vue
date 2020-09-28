@@ -1,7 +1,7 @@
 <template>
-  <div class="getmessages">
-    <div class="row">
-      <div class="col-12">
+  <div>
+    <div class="col-12">
+      <div class="table-responsive-lg">
         <!-- TABLEAU DES MESSAGES  -->
         <table class="table table-light table-striped">
             <thead class="thead-dark">
@@ -11,6 +11,7 @@
                 <th scope="col">Contenu</th>
                 <th scope="col">Auteur</th>
                 <th scope="col">Like</th>
+                <th scope="col">Image</th>
                 <th scope="col">Date de Création</th>
                 <th scope="col">Date de Modification</th>
                 </tr>
@@ -32,6 +33,8 @@
                     <td>{{ message.content }}</td>
                     <td>{{ message.user.email }}</td>
                     <td>{{ message.like }}</td>
+                    <td v-if="message.image != ''"><img :src="message.image" alt="image" class="image"></td>
+                    <td v-else></td>
                     <td>{{ message.createdAt_formated }}</td>
                     <td>{{ message.updatedAt_formated }}</td>
                 </tr>
@@ -80,6 +83,13 @@
             <h3 class="text-center">Modifier le contenu du message :</h3>
             <div class="form-group">
                 <textarea class="form-control" id="message" aria-describedby="messageHelp" rows="4" v-model="content" required></textarea>
+            </div>
+            <div class="form-group">
+              <input type="file" class="form-control-file inputFile" name="image" id="image" @change="onFileChange">
+              <label for="image">Choisissez une image</label>
+            </div>
+            <div class="preview">
+                <img v-if="url" :src="url" />
             </div>
             <button type="submit">Modifier le message</button>
           </form>
@@ -225,6 +235,40 @@ export default {
 
 <style scoped>
 
+.preview img {
+  max-width: 200px;
+}
+
+.inputFile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+ 
+.inputFile + label {
+    border: 0;
+    background: none;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    border: 2px solid #3498db;
+    padding: 14px 40px;
+    outline: none;
+    color: white;
+    border-radius: 24px;
+    transition: 0.25s;
+    cursor: pointer;
+    max-width: 700px;
+}
+
+.inputFile:focus + label,
+.inputFile + label:hover {
+    background: #2ecc71
+}
+
 .table{
   color: black;
 }
@@ -232,18 +276,8 @@ export default {
     width: 100px;
 }
 
-.plink{
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.plink:hover{
-  text-decoration: underline;
-  color: #3498db;
-}
-
-.getmessages{
-    width: 100%;
+.image{
+  width: 200px;
 }
 
 caption { 
