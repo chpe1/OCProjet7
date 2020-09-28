@@ -166,8 +166,6 @@ export default {
         let formData = new FormData();
         // Si un fichier a été téléchargé
         let file = document.getElementById('image').files[0];
-        console.log(document.getElementById('image').files);
-
         if (file){
         formData.append('image', file);
         }

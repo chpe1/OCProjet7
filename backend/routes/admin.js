@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const adminAuth = require('../middleware/adminAuth');
-// const multer = require('../middleware/multer-config');
+const multer = require('../middleware/multer-config');
 const adminCtrl = require('../controllers/admin');
 const commentsCtrl = require('../controllers/commentaires');
 const messageCtrl = require('../controllers/message');
@@ -15,7 +15,7 @@ router.get('/messages/', adminAuth, messageCtrl.getAllMessages);
 // Un admin peut modifier un commentaire
 router.put('/comments/:id', adminAuth, commentsCtrl.modifyComment);
 // Un admin peut modifier un message
-router.put('/messages/:id', adminAuth, messageCtrl.modifyMessage);
+router.put('/messages/:id', adminAuth, multer, messageCtrl.modifyMessage);
 // Un admin peut supprimer un commentaire
 router.delete('/comments/:id', adminAuth, commentsCtrl.deleteComment);
 // Un admin peut supprimer un message

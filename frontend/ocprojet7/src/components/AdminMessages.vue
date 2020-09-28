@@ -24,7 +24,7 @@
                         <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                       </svg>
                       &ensp; <!-- double espace    -->
-                      <svg @click="getUpdateFormMessage(message.id, message.content)" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square plink" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <svg @click="getUpdateFormMessage(message.id, message.content, message.image)" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square plink" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                         <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
                       </svg>
@@ -79,7 +79,7 @@
 
         <!-- FORMULAIRE DE MODIFICATION D'UN MESSAGE -->
         <div v-if="displayFormMessage===true">
-          <form id="UpdateFormMessage" class="UpdateFormMessage" @submit.prevent="updateMessage">
+          <form id="UpdateFormMessage" class="UpdateFormMessage" @submit.prevent="updateMessage" enctype="multipart/form-data">
             <h3 class="text-center">Modifier le contenu du message :</h3>
             <div class="form-group">
                 <textarea class="form-control" id="message" aria-describedby="messageHelp" rows="4" v-model="content" required></textarea>
@@ -89,7 +89,7 @@
               <label for="image">Choisissez une image</label>
             </div>
             <div class="preview">
-                <img v-if="url" :src="url" />
+                <img v-if="imageUrl" :src="imageUrl" />
             </div>
             <button type="submit">Modifier le message</button>
           </form>
@@ -127,7 +127,8 @@ export default {
             messageId: '',
             content: '',
             commentId: '',
-            displayFormComment: false
+            displayFormComment: false,
+            imageUrl: null
             }
       },
   computed: {
@@ -136,13 +137,19 @@ export default {
       })
     },
   methods: {
+    onFileChange(e) {
+        const file = e.target.files[0];
+        this.imageUrl = URL.createObjectURL(file);
+      },
     getAllMessages(){
       axios.get('http://localhost:3000/api/admin/messages', {
         headers: {
             'Authorization': 'Bearer ' + this.token
           }
         })
-      .then((response) => this.messages = response.data)
+      .then((response) => {
+        this.messages = response.data
+        })
       .catch(error => this.messages = error);
     },
     getAllComments(messageId){
@@ -170,18 +177,29 @@ export default {
         })
       .catch(error => this.info = error);
     },
-    getUpdateFormMessage(messageId, content){
+    getUpdateFormMessage(messageId, content, imageUrl){
       this.displayFormMessage = true;
       this.messageId = messageId;
       this.content = content;
+      this.imageUrl = imageUrl;
     },
     updateMessage(){
+      let formData = new FormData();
+      // Si un fichier a été téléchargé
+      let file = document.getElementById('image').files[0];
+      if (file){
+        formData.append('image', file);
+      }
+      // Si aucun fichier n'a été téléchargé.
+      else{
+          formData.append('image', this.imageUrl);
+      }
+      formData.append('content', this.content);
       let url = 'http://localhost:3000/api/admin/messages/' + this.messageId;
-      axios.put(url, {
-        content: this.content
-      },{
+      axios.put(url, formData,{
         headers: {
-            'Authorization': 'Bearer ' + this.token
+            'Authorization': 'Bearer ' + this.token,
+            'Content-Type': 'multipart/form-data'
           }
         })
       .then((response) => {
