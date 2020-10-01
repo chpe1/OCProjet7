@@ -148,7 +148,8 @@ export default {
           }
         })
       .then((response) => {
-        this.messages = response.data
+        this.messages = response.data;
+        this.info='';
         })
       .catch(error => this.messages = error);
     },
@@ -161,6 +162,7 @@ export default {
         })
       .then((response) => {
         this.comments = response.data;
+        this.info = '';
         })
       .catch(error => this.info = error);
     },

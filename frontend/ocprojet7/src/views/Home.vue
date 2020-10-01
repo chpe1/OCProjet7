@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <p class="text-center"><img class="w-75" alt="logo" src="../assets/images/groupomania-mini.png"></p>
+    <p class="text-center"><img class="logo" alt="logo" src="../assets/images/groupomania-mini.png"></p>
     <p class="text-center">Bienvenue sur le réseau social de Groupomania</p>
     <div class="row">
      <FormUser/>

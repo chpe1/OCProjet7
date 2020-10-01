@@ -27,6 +27,7 @@ const routes = [
     name: 'Signup',
     component: () => import('../views/Signup.vue')
   }
+
 ]
 
 const router = createRouter({

@@ -1,6 +1,7 @@
 <template>
 <div>
     <div class="message">
+        <!-- Formulaire d'ajout d'un message -->
         <form id="formMessage" class="formMessage" @submit.prevent="sentMessage" enctype="multipart/form-data">
             <h3 class="text-center">Ajouter un message :</h3>
             <div class="form-group">
@@ -36,10 +37,12 @@
             </p>
                 <p v-if="userId === message.userId" class="plink mr-2" @click="editMessage(message.id, message.content, message.image)">Modifier le message</p>
                 <p v-if="userId === message.userId" class="plink mr-2" @click="deleteMessage(message.id)">Supprimer le message</p>
-                <p v-if="showComments != message.id" class="plink mr-2" @click="getComments(message.id)">Voir les commentaires</p>
-            <p v-else class="plink mr-2" @click="hideComments">Cacher les commentaires</p> 
+                <p v-if="showComments != message.id" class="plink mr-2" @click="changeShowComments(message.id)">Voir les commentaires</p>
+                <p v-else class="plink mr-2" @click="hideComments">Cacher les commentaires</p>
         </small>
         </div>
+        <DisplayComments :messageId="message.id" :showComments="showComments"></DisplayComments>
+        
         <!-- Formulaire d'édition d'un message -->
         <div v-if="showEditMessage===message.id">
             <form id="formEditMessage" class="formMessage" @submit.prevent="sentEditMessage(message.id)" enctype="multipart/form-data">
@@ -57,48 +60,6 @@
                 <button type="submit">Modifier votre message</button>
             </form>
         </div>
-        <!-- Formulaire d'ajout de commentaire -->
-        <div v-if="showComments===message.id">            
-            <div class="comments my-3 p-3 bg-light rounded box-shadow">
-                <form id="formNewComment" class="formNewComment" @submit.prevent="sentNewComment(message.id)">
-                    <div class="form-group">
-                        <textarea class="form-control" id="createcomment" rows="4" v-model="newComment" required></textarea>
-                    </div>
-                    <button type="submit">Ecrire un nouveau commentaire</button>
-                </form>
-            </div>
-            <!-- Liste des commentaires -->
-            <div class="comments" v-if="comments.data.length > 0">
-                <div class="my-3 p-3 bg-light rounded box-shadow" v-for="comment in comments.data" :key="comment">
-                    <div class="media text-black text-left pt-3 mb-3">
-                        <img :src="comment.user.avatar" alt="avatar" class="mr-2 rounded avatar">
-                        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                            <em><strong class="d-block text-gray-dark">{{ comment.user.email }}</strong></em>
-                            {{ comment.content }}
-                        </p>
-                    </div>
-                    <!-- Lien pour modifier / supprimer un commentaire -->
-                    <small class="text-right text-info">
-                        <p v-if="userId == comment.userId">
-                            <span class="plink" @click="editComment(comment.id, comment.content)">Modifier le commentaire</span>&ensp;
-                            <span class="plink" @click="deleteComment(comment.id, message.id)">Supprimer le commentaire</span>
-                        </p>
-                    </small>
-                    <!-- Formulaire de modification de commentaire -->
-                    <div v-if="showEditComment===comment.id">
-                        <div class="comments my-3 p-3 bg-light rounded box-shadow">
-                            <form id="formNewComment" class="formNewComment" @submit.prevent="sentEditComment(comment.id, message.id)">
-                                <div class="form-group">
-                                    <textarea class="form-control" id="editComment" rows="4" v-model="updateComment" required></textarea>
-                                </div>
-                                <button type="submit">Modifier le commentaire</button>
-                            </form>
-                        </div>
-                        <p class="text-center">{{ messageComment }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -108,7 +69,7 @@
 
 import axios from 'axios'
 import { mapState } from 'vuex'
-// import DisplayComments from '@/components/DisplayComments.vue'
+import DisplayComments from '@/components/DisplayComments.vue'
 
 export default {
   name: 'DisplayMessages',
@@ -116,23 +77,18 @@ export default {
             return {
                     info: '',
                     showComments: '',
-                    showEditComment: '',
                     showEditMessage: '',
                     content: '',
                     editContent: '',
-                    updateComment: '',
-                    comments: '',
-                    newComment: '',
-                    messageComment: '',
                     messageInfo: '',
                     likes: [], // likes est un tableau contenant les messages aimés par l'utilisateur connecté
                     url: null, 
                     editUrl: null
             }
         },
-//   components: {
-//       DisplayComments
-//   },
+  components: {
+      DisplayComments
+  },
   computed: {
     ...mapState({
     token: 'token',
@@ -140,6 +96,13 @@ export default {
     })
   },
   methods: {
+        hideComments(){
+          this.showComments='';
+      },
+      changeShowComments(messageId){
+        // showComments permet de montrer les commentaires du message choisi.
+        this.showComments = messageId;
+      },
       onFileChange(e) {
         const file = e.target.files[0];
         this.url = URL.createObjectURL(file);
@@ -166,8 +129,10 @@ export default {
         let formData = new FormData();
         // Si un fichier a été téléchargé
         let file = this.$refs.image.files[0];
+        console.log(file);
         if (file){
         formData.append('image', file);
+        file = null;
         }
         // Si aucun fichier n'a été téléchargé.
         else{
@@ -188,37 +153,6 @@ export default {
             })
         .catch(error => this.messageInfo= error);
       },
-      hideComments(){
-          this.showComments='';
-          this.newComment= '';
-          this.messageInfo= '';
-      },
-      getComments(messageId){
-        // showComments permet de montrer les commentaires du message choisi.
-        this.showComments = messageId;
-        // Réinitialise showEditMessage pour que le formulaire de modification du message disparaisse si on clique sur voir les commentaires
-        this.showEditMessage = '';
-
-        axios.get('http://localhost:3000/api/comments/'+ messageId,{
-            headers: {
-                'Authorization': 'Bearer ' + this.token
-                }
-            })
-        .then(response => this.comments = response)
-        .catch(error => this.comments = error);
-      },
-      deleteComment(commentId, messageId){
-          axios.delete('http://localhost:3000/api/comments/'+ commentId,{
-            headers: {
-                'Authorization': 'Bearer ' + this.token
-                }
-            })
-        .then(() => {
-            this.showComments = messageId;
-            this.getComments(messageId);
-            })
-        .catch(error => this.messageInfo = error.message);
-      },
       deleteMessage(messageId){
           axios.delete('http://localhost:3000/api/messages/'+ messageId,{
             headers: {
@@ -236,11 +170,6 @@ export default {
         this.editContent = editContent;
         this.editUrl = image;
         this.showComments='';
-      },
-      editComment(commentId, content){
-        this.showEditComment = commentId;
-        this.updateComment = content;
-        this.messageComment = '';
       },
       sentEditMessage(messageId){
         let formData = new FormData();
@@ -267,36 +196,6 @@ export default {
             this.getMessages();
         })
         .catch(error => this.messageInfo = error.message);
-      },
-      sentEditComment(commentId, messageId){
-        axios.put('http://localhost:3000/api/comments/' + commentId, {
-            content: this.updateComment
-        }, {
-        headers: {
-            'Authorization': 'Bearer ' + this.token
-            }
-        })
-        .then(() => {
-            this.showEditComment = '';
-            this.getComments(messageId);
-            })
-        .catch(error => this.messageComment = error.message);
-      },
-      sentNewComment(messageId){
-        axios.post('http://localhost:3000/api/comments/'+ messageId,{
-            content: this.newComment,
-            userId: this.userId
-        },{
-            headers: {
-                'Authorization': 'Bearer ' + this.token
-                }
-            })
-        .then((response) => {
-            this.newComment= '';
-            this.getComments(messageId);
-            this.messageInfo= response.data.message;
-            })
-        .catch(error => this.messageInfo = error);
       },
       getMessages(){
         axios.get('http://localhost:3000/api/messages/',{
@@ -366,7 +265,6 @@ export default {
 
 .message {
     color: white;
-
 }
 
 .avatar{
