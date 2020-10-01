@@ -16,7 +16,11 @@
           <fieldset>
             <legend>Modifier votre avatar :</legend>
             <div class="form-group">
-              <input type="file" class="form-control-file" ref="newAvatar" name="newAvatar" id="newAvatar" >
+              <input type="file" class="form-control-file inputFile" ref="newAvatar" name="newAvatar" id="newAvatar" @change="onFileChange">
+              <label for="newAvatar">Choisissez une image</label>
+            </div>
+            <div class="preview">
+                <img v-if="url" :src="url" />
             </div>
           </fieldset>
             <button type="submit">Modifier votre profil</button>
@@ -41,6 +45,7 @@ export default {
                     info: '',
                     password: '',
                     confirmPassword: '',
+                    url: ''
                   }
       },
   components: {
@@ -55,10 +60,13 @@ export default {
       })
     },
   methods: {
+    onFileChange(e) {
+      const file = e.target.files[0];
+      // URL.createObjectURL() crée une chaîne contenant une URL représentant l’objet passé en paramètre
+      this.url = URL.createObjectURL(file);
+    },
     updateUser(){
       let formData = new FormData();
-      // formData.append('email', this.email);
-      formData.append('password', this.password);
       // Si un fichier a été téléchargé
       let file = this.$refs.newAvatar.files[0];
       if (file){
@@ -68,20 +76,23 @@ export default {
       else{
         formData.append('avatar', "");
       }
-      
-      axios.put('http://localhost:3000/api/auth/' + this.userId, formData, {
+      if (this.password === this.confirmPassword){
+        formData.append('password', this.password);
+        axios.put('http://localhost:3000/api/auth/' + this.userId, formData, {
         headers: {
             'Authorization': 'Bearer ' + this.token
           }
         })
-      .then((response) => {
-        if (localStorage.avatar){ // On modifie l'avatar dans le localstorage s'il existe
-            localStorage.avatar = response.data.avatar;
-            }
-        this.$store.commit('SETAVATAR', response.data.avatar); // On modifie l'avatar dans le store.
-        return this.info = response.data.message
-        })
-      .catch(error => this.info = error);
+        .then((response) => {
+          this.$store.commit('SETAVATAR', response.data.avatar); // On modifie l'avatar dans le store.
+          return this.info = response.data.message
+          })
+        .catch(error => this.info = error);
+      }
+      else{
+        this.info = 'Vos mots de passe sont différents';
+      }
+      
     }
   }
 }
@@ -137,22 +148,42 @@ export default {
     cursor: pointer
 }
 
-.formUpdateUser input[type="file"] {
+
+.formUpdateUser button[type="submit"]:hover {
+    background: #2ecc71
+}
+
+.inputFile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+ 
+.inputFile + label {
     border: 0;
     background: none;
     display: block;
     margin: 20px auto;
     text-align: center;
     border: 2px solid #3498db;
-    padding: 10px 10px;
+    padding: 14px 40px;
     outline: none;
-    max-width: 250px;
     color: white;
     border-radius: 24px;
-    transition: 0.25s
+    transition: 0.25s;
+    cursor: pointer;
+    max-width: 250px;
+}
+ 
+.inputFile:focus + label,
+.inputFile + label:hover {
+    background: #2ecc71
 }
 
-.formUpdateUser button[type="submit"]:hover {
-    background: #2ecc71
+.preview img {
+  max-width: 200px;
 }
 </style>

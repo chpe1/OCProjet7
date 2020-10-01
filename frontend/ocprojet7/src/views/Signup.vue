@@ -15,7 +15,6 @@
 // @ is an alias to /src
 import FormSignup from '@/components/FormSignup.vue'
 import { mapState } from 'vuex'
-// import { mapGetters } from 'vuex'
 
 export default {
   name: 'Signup',
@@ -23,7 +22,6 @@ export default {
     FormSignup
   }, 
   computed: {
-        // ...mapGetters(['getIsAdmin'])
         ...mapState({
           email: 'email',
           avatar: 'avatar'

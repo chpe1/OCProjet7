@@ -13,7 +13,11 @@
               <input type="password" class="form-control" id="confirm" placeholder="Confirmez votre mot de passe" v-model="confirm">
             </div>
             <div class="form-group">
-              <input type="file" class="form-control-file" name="avatar" id="avatar" >
+              <input type="file" class="form-control-file inputFile" ref="avatar" name="avatar" id="avatar" @change="onFileChange">
+              <label for="avatar">Choisissez un avatar</label>
+            </div>
+            <div class="preview">
+                <img v-if="url" :src="url" />
             </div>
             <button type="submit">Inscription</button>
         </form>
@@ -33,14 +37,20 @@ export default {
                     email: '',
                     password: '',
                     confirm: '',
-                    avatar: ''
+                    avatar: '',
+                    url: ''
             }
         },
   methods: {
+      onFileChange(e) {
+        const file = e.target.files[0];
+        // URL.createObjectURL() crée une chaîne contenant une URL représentant l’objet passé en paramètre
+        this.url = URL.createObjectURL(file);
+        },
     signup() {
         let formData = new FormData();
         // Si un fichier a été téléchargé
-        let file = document.getElementById('avatar').files[0];
+        let file = this.$refs.avatar.files[0];
         if (file){
         formData.append('image', file);
         }
@@ -68,9 +78,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.preview img {
+  max-width: 200px;
+}
+
 .login{
     margin: auto;
-    // border: 1px solid yellow;
 }
 .formSignup {
     max-width: 500px;
@@ -129,18 +142,33 @@ export default {
     background: #2ecc71
 }
 
-.formSignup input[type="file"] {
+.inputFile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+ 
+.inputFile + label {
     border: 0;
     background: none;
     display: block;
     margin: 20px auto;
     text-align: center;
     border: 2px solid #3498db;
-    padding: 10px 10px;
+    padding: 14px 40px;
     outline: none;
-    max-width: 250px;
     color: white;
     border-radius: 24px;
-    transition: 0.25s
+    transition: 0.25s;
+    cursor: pointer;
+    max-width: 250px;
+}
+ 
+.inputFile:focus + label,
+.inputFile + label:hover {
+    background: #2ecc71
 }
 </style>

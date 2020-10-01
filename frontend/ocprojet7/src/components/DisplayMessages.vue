@@ -8,7 +8,7 @@
                 <textarea class="form-control" id="message" aria-describedby="messageHelp" rows="4" placeholder="Entrez votre message" v-model="content" required></textarea>
             </div>
             <div class="form-group">
-              <input type="file" class="form-control-file inputFile" ref="image" name="image" id="image" @change="onFileChange">
+              <input type="file" class="form-control-file inputFile" name="image" id="image" @change="onFileChange">
               <label for="image">Choisissez une image</label>
             </div>
             <div class="preview">
@@ -83,7 +83,8 @@ export default {
                     messageInfo: '',
                     likes: [], // likes est un tableau contenant les messages aimés par l'utilisateur connecté
                     url: null, 
-                    editUrl: null
+                    editUrl: null,
+                    file: null
             }
         },
   components: {
@@ -96,7 +97,7 @@ export default {
     })
   },
   methods: {
-        hideComments(){
+      hideComments(){
           this.showComments='';
       },
       changeShowComments(messageId){
@@ -104,8 +105,9 @@ export default {
         this.showComments = messageId;
       },
       onFileChange(e) {
-        const file = e.target.files[0];
-        this.url = URL.createObjectURL(file);
+        this.file = e.target.files[0];
+        // URL.createObjectURL() crée une chaîne contenant une URL représentant l’objet passé en paramètre
+        this.url = URL.createObjectURL(this.file);
         },
       editOnFileChange(e) {
         const file = e.target.files[0];
@@ -128,11 +130,8 @@ export default {
       sentMessage() {
         let formData = new FormData();
         // Si un fichier a été téléchargé
-        let file = this.$refs.image.files[0];
-        console.log(file);
-        if (file){
-        formData.append('image', file);
-        file = null;
+        if (this.file){
+        formData.append('image', this.file);
         }
         // Si aucun fichier n'a été téléchargé.
         else{
@@ -149,6 +148,7 @@ export default {
             this.messageInfo = 'Message bien envoyé !';
             this.content='';
             this.url='';
+            this.file='';
             this.getMessages();
             })
         .catch(error => this.messageInfo= error);
@@ -317,58 +317,5 @@ export default {
 {
     border-color: #2ecc71
 }
-
-.formNewComment {
-    max-width: 500px;
-    margin: left;
-    position: relative;
-    transition: 0.25s;
-    text-align: left;
-}
-
-.formNewComment button[type="submit"] {
-    border: 0;
-    background: black;
-    display: block;
-    margin: 20px auto;
-    text-align: left;
-    border: 2px solid black;
-    border-radius: 24px;
-    transition: 0.25s;
-    cursor: pointer;
-    color: white;
-    outline: none;
-}
-
-.formNewComment button[type="submit"]:hover {
-    background: gray;
-}
-
-.formNewComment textarea{
-    background: gray;
-    display: block;
-    margin: 20px auto;
-    text-align: left;
-    border: 2px solid black;
-    padding: 10px 10px;
-    outline: none;
-    max-width: 500px;
-    color: white;
-    border-radius: 10px;
-    transition: 0.25s
-}
-
-.comments {
-    margin-top: 10px;
-    color: black;
-    max-width: 600px;
-}
-
-.card-body{
-    background: rgb(144, 143, 143);
-    color: white;
-    border-bottom: 1px solid black;
-}
-
 
 </style>
