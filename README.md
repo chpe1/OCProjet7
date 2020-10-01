@@ -7,3 +7,5 @@ Une partie backend
 Une partie frontend
 
 Il suffit juste de créer une base de données et de rentrer les identifiants de connexion à cette base dans le fichier backend/database.js , l'application s'occupe du reste !
+
+Un exemple de base de données est joint.

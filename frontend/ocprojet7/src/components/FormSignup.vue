@@ -66,7 +66,7 @@ export default {
             this.info = response.data.message;
             return this.$router.push('/');
           })
-          .catch(error => this.info = error);
+          .catch(error => this.info = error.message);
         }
         else{
           this.info = 'Vos mots de passe sont différents'
